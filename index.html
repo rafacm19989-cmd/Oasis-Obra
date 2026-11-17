@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Oasis – Espelho da obra</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f2ee; --card:#fff; --ink:#1d2329; --muted:#6b7177; --line:#e4e0d8; --soft:#f9f8f5;
+  --brand:#1f3a4d; --accent:#e08a1e; --accent-soft:#fdf1e1;
+  --ok:#2f8a57; --ok-soft:#e5f4ea; --warn:#c77a0a; --warn-soft:#fdf2df; --bad:#c2412d; --bad-soft:#fbe8e4; --info:#2f6fa8; --info-soft:#e5eff8;
+  --gray-bar:#c9c4ba; --blue-bar:#2f6fa8;
+  --r:12px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:12.5px}
+header{background:var(--brand);color:#fff;position:sticky;top:0;z-index:20}
+.hwrap{max-width:1280px;margin:0 auto;padding:12px 16px 0;display:flex;flex-direction:column;gap:10px}
+.htop{display:flex;align-items:center;gap:12px}
+.logo{width:34px;height:34px;border-radius:9px;background:var(--accent);display:grid;place-items:center;flex:none}
+.htitle{font-weight:700;font-size:16px;letter-spacing:.2px}
+.hsub{font-size:12px;opacity:.75}
+.live{margin-left:auto;font-size:12px;display:flex;align-items:center;gap:6px;opacity:.9;white-space:nowrap}
+.dot{width:8px;height:8px;border-radius:50%;background:#8aa;flex:none}
+.dot.on{background:#5fd18b;box-shadow:0 0 0 3px rgba(95,209,139,.25)}
+.dot.warn{background:#f0b14a}
+nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav a{color:#fff;opacity:.72;text-decoration:none;padding:9px 14px 11px;border-bottom:3px solid transparent;font-weight:500;white-space:nowrap}
+nav a.on{opacity:1;border-color:var(--accent)}
+main{max-width:1280px;margin:0 auto;padding:18px 16px 80px}
+h2{font-size:18px;margin:0 0 12px}
+h3{font-size:14px;margin:0 0 10px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:600}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.grid{display:grid;gap:12px}
+.grid>*,.predio-wrap>*{min-width:0}
+.kpis{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.kpi .l{font-size:12px;color:var(--muted)}
+.kpi .v{font-size:22px;font-weight:700;margin-top:2px;font-variant-numeric:tabular-nums}
+.kpi .s{font-size:12px;color:var(--muted);margin-top:2px}
+.banner{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.banner .big{font-size:20px;font-weight:700}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:600;white-space:nowrap}
+.p-ok{background:var(--ok-soft);color:var(--ok)} .p-bad{background:var(--bad-soft);color:var(--bad)} .p-warn{background:var(--warn-soft);color:var(--warn)}
+.p-info{background:var(--info-soft);color:var(--info)} .p-gray{background:#eeebe5;color:#5d6166} .p-marco{background:#fff5cc;color:#8a6a00}
+.bar{height:8px;border-radius:99px;background:#ece8e0;position:relative;overflow:hidden}
+.bar i{position:absolute;inset:0 auto 0 0;border-radius:99px}
+.cmp{display:grid;gap:6px}
+.cmp .row{display:grid;grid-template-columns:90px 1fr 54px;align-items:center;gap:10px;font-size:13px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-weight:600;color:var(--muted);font-size:12px;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap;background:var(--soft);position:sticky;top:0}
+td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr.click{cursor:pointer} tr.click:hover td{background:#faf7f1}
+.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tblwrap{overflow:auto;border:1px solid var(--line);border-radius:var(--r);background:#fff;max-height:70vh}
+.tblwrap table th:first-child,.tblwrap table td:first-child{padding-left:14px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.inp,select.inp,textarea.inp{border:1px solid var(--line);background:#fff;border-radius:9px;padding:8px 10px;min-height:38px;outline:none}
+.inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.btn{border:1px solid var(--line);background:#fff;border-radius:9px;padding:8px 14px;min-height:38px;cursor:pointer;font-weight:600;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{background:var(--soft)}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.pri:hover{filter:brightness(.95)}
+.btn.dark{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn.danger{color:var(--bad)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:#fff}
+.seg button{border:0;background:none;padding:8px 12px;cursor:pointer;font-weight:600;color:var(--muted)}
+.seg button.on{background:var(--brand);color:#fff}
+.muted{color:var(--muted)} .small{font-size:12px}
+.grp{font-weight:600}
+.svc{max-width:420px}
+.empty{padding:40px 20px;text-align:center;color:var(--muted)}
+.two{grid-template-columns:1fr}
+@media(min-width:900px){.two{grid-template-columns:1.1fr .9fr}}
+/* gantt */
+.gwrap{overflow:auto;border:1px solid var(--line);border-radius:var(--r);background:#fff;max-height:72vh;position:relative}
+.gtbl{position:relative}
+.ghead{position:sticky;top:0;z-index:3;display:flex;background:var(--soft);border-bottom:1px solid var(--line)}
+.gname{position:sticky;left:0;z-index:2;background:#fff;width:280px;min-width:280px;padding:5px 10px;border-right:1px solid var(--line);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ghead .gname{background:var(--soft);z-index:4;font-weight:600;color:var(--muted)}
+.grow{display:flex;border-bottom:1px solid #f0ece5;height:28px}
+.grow:hover .gname{background:#faf7f1}
+.gsec{display:flex;background:#f6f3ec;border-bottom:1px solid var(--line);height:28px}
+.gsec .gname{background:#f6f3ec;font-weight:700;color:var(--brand)}
+.gtrack{position:relative;flex:none}
+.gwk{position:absolute;top:0;bottom:0;border-left:1px solid #f1ede6}
+.gwkl{position:absolute;top:6px;font-size:10.5px;color:var(--muted);white-space:nowrap;padding-left:3px}
+.gb{position:absolute;height:7px;border-radius:4px}
+.gb.base{top:15px;background:var(--gray-bar)}
+.gb.rep{top:6px;background:var(--blue-bar)}
+.gb.rep.late{background:var(--bad)}
+.gb.rep.done{background:var(--ok)}
+.gm{position:absolute;top:7px;width:12px;height:12px;background:#e0b400;transform:rotate(45deg);margin-left:-6px;border-radius:2px}
+.today{position:absolute;top:0;bottom:0;width:2px;background:var(--accent);z-index:1}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);align-items:center}
+.legend i{display:inline-block;width:18px;height:7px;border-radius:4px;vertical-align:middle;margin-right:5px}
+/* modal */
+.ov{position:fixed;inset:0;background:rgba(20,26,30,.45);z-index:50;display:flex;align-items:flex-end;justify-content:center}
+@media(min-width:700px){.ov{align-items:center}}
+.modal{background:#fff;width:100%;max-width:620px;max-height:92vh;overflow:auto;border-radius:16px 16px 0 0;padding:20px}
+@media(min-width:700px){.modal{border-radius:16px}}
+.modal h2{display:flex;align-items:center;gap:10px}
+.form{display:grid;gap:12px;grid-template-columns:1fr 1fr}
+.form .f{display:flex;flex-direction:column;gap:5px}
+.form .f.full{grid-column:1/-1}
+.form label{font-size:12px;font-weight:600;color:var(--muted)}
+.actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}
+.actions .left{margin-right:auto}
+.hint{font-size:12px;color:var(--muted)}
+.err{color:var(--bad);font-size:12px}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:10px;z-index:60;font-size:13px;box-shadow:0 6px 20px rgba(0,0,0,.2)}
+.daycell{width:42px;text-align:center;padding:6px 2px}
+.dc{display:inline-grid;place-items:center;width:30px;height:22px;border-radius:6px;font-size:11px;font-weight:600}
+.dc.p{background:#eeebe5;color:#8a8e93}
+.dc.r{background:var(--ok-soft);color:var(--ok)}
+.dc.x{background:var(--warn-soft);color:var(--warn)}
+.dc.m{background:var(--bad-soft);color:var(--bad)}
+.entry{display:grid;grid-template-columns:1fr auto;gap:4px 12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.entry:last-child{border-bottom:0}
+.entry .t{font-weight:600}
+.weeknav{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ro-note{background:var(--info-soft);color:var(--info);border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:14px}
+.combo{position:relative}
+.combo-list{position:absolute;left:0;right:0;top:100%;margin-top:4px;background:#fff;border:1px solid var(--line);border-radius:10px;max-height:260px;overflow:auto;z-index:5;box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.combo-list div{padding:8px 10px;cursor:pointer;font-size:13px;border-bottom:1px solid #f3f0ea}
+.combo-list div:hover,.combo-list div.on{background:var(--accent-soft)}
+.hol{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--line)}
+
+/* prédio */
+.predio-wrap{display:grid;gap:16px;grid-template-columns:1fr}
+@media(min-width:1000px){.predio-wrap{grid-template-columns:minmax(0,1fr) 300px}}
+.bld{--cols:9;position:relative;padding:0 4px}
+.bld-row{display:grid;grid-template-columns:96px minmax(0,1fr) 128px;align-items:stretch;gap:10px}
+@media(max-width:640px){.bld-row{grid-template-columns:64px minmax(0,1fr) 62px;gap:6px}.bld-info .ph,.bld-info .pv{display:none}.colhdr{font-size:9px;gap:2px;padding:0 4px}.bld-lbl{font-size:11px!important}}
+.bld-lbl{font-size:12.5px;font-weight:600;display:flex;align-items:center;justify-content:flex-end;text-align:right;cursor:pointer;line-height:1.15}
+.bld-lbl:hover{color:var(--accent)}
+.facade{display:grid;grid-template-columns:repeat(var(--cols),1fr);gap:5px;padding:6px 8px;background:#d9d3c7;border-left:3px solid #b9b1a2;border-right:3px solid #b9b1a2}
+.floor-line{border-bottom:3px solid #b9b1a2}
+.win{position:relative;height:34px;border-radius:3px;background:#f3f0ea;border:1.5px solid #cfc8bb;overflow:hidden;cursor:pointer;transition:transform .12s}
+.win:hover{transform:scale(1.08);z-index:2;box-shadow:0 3px 10px rgba(0,0,0,.15)}
+.win i{position:absolute;left:0;right:0;bottom:0;background:var(--blue-bar)}
+.win.done{border-color:#2f8a57}.win.done i{background:var(--ok)}
+.win.late{border-color:var(--bad);border-width:2px}
+.win.late i{background:#e58b7c}
+.win.wall{background:transparent;border:1.5px dashed #c4bcae;cursor:default}
+.win.wall:hover{transform:none;box-shadow:none}
+.win .act{position:absolute;top:3px;right:3px;width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 0 rgba(224,138,30,.7);animation:pulse 1.6s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(224,138,30,.6)}70%{box-shadow:0 0 0 7px rgba(224,138,30,0)}100%{box-shadow:0 0 0 0 rgba(224,138,30,0)}}
+.bld-info{display:flex;flex-direction:column;justify-content:center;font-size:12px;gap:3px;min-width:0}
+.bld-info .bar{height:6px}
+.bld-info .ph{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:11.5px}
+.roof{height:30px;background:#8a5a44;clip-path:polygon(4% 100%,50% 0,96% 100%);margin:0 -4px}
+.atico{display:grid;grid-template-columns:repeat(var(--cols),1fr)}
+.ground{height:14px;background:repeating-linear-gradient(135deg,#a3896b 0 6px,#8f7659 6px 12px);border-top:3px solid #6c5a45}
+.under .facade{background:#c8bfae}
+.colhdr{display:grid;grid-template-columns:repeat(var(--cols),1fr);gap:5px;padding:0 8px;font-size:10.5px;color:var(--muted);text-align:center;font-weight:600}
+.colhdr span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.side-card h4{margin:0 0 8px;font-size:13px}
+.today-item{display:flex;gap:8px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--line);font-size:12.5px;cursor:pointer}
+.today-item:last-child{border-bottom:0}
+.today-item .tag{flex:none;font-size:10.5px;font-weight:700;background:var(--accent-soft);color:var(--warn);border-radius:6px;padding:2px 6px}
+.legend .w{display:inline-block;width:14px;height:16px;border-radius:2px;border:1.5px solid #cfc8bb;background:#f3f0ea;vertical-align:middle;margin-right:5px;position:relative;overflow:hidden}
+</style>
+<script>
+window.MIRROR=true;
+(function(){
+  var P=fetch('data.json?v='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();});
+  P.then(function(D){ window.MIRROR_SYNC=D.atualizadoEmTexto||''; });
+  function snap(id,data){ return {id:id,exists:!!data,data:function(){return data;},metadata:{fromCache:false,hasPendingWrites:false}}; }
+  var db={
+    doc:function(p){ return {onSnapshot:function(n,e){ P.then(function(D){ var a=p.split('/'); n(snap(a[1],(D[a[0]]||{})[a[1]])); }).catch(function(){ e&&e({code:'unavailable'}); }); return function(){}; }}; },
+    collection:function(c){ return {onSnapshot:function(n,e){ P.then(function(D){ var m=D[c]||{}; var docs=Object.keys(m).sort().map(function(k){return snap(k,m[k]);}); n({docs:docs,size:docs.length,empty:!docs.length,metadata:{fromCache:false}}); }).catch(function(){ e&&e({code:'unavailable'}); }); return function(){}; }}; }
+  };
+  window.claude={use:function(n){ return Promise.resolve(n==='db'?db:null); }};
+})();
+</script>
+<style>#nav a[data-v=financeiro],#nav a[data-v=ajustes]{display:none}</style>
+</head>
+<body>
+<header>
+  <div class="hwrap">
+    <div class="htop">
+      <div class="logo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6"/></svg></div>
+      <div><div class="htitle" id="hNome">Oasis</div><div class="hsub">Espelho da obra · somente leitura</div></div>
+      <div class="live"><span class="dot" id="liveDot"></span><span id="liveTxt">Conectando…</span></div>
+    </div>
+    <nav id="nav">
+      <a href="#resumo" data-v="resumo">Resumo</a>
+      <a href="#cronograma" data-v="cronograma">Cronograma</a>
+      <a href="#diario" data-v="diario">Diário de obra</a>
+      <a href="#semana" data-v="semana">Semana</a>
+      <a href="#financeiro" data-v="financeiro">Financeiro</a>
+      <a href="#ajustes" data-v="ajustes">Ajustes</a>
+    </nav>
+  </div>
+</header>
+<main id="app"><div class="empty">Carregando dados da obra…</div></main>
+<div id="modalRoot"></div>
+
+<script>
+// ===== Motor de cálculo (replica a lógica da planilha Cronograma_de_Obra_Oasis) =====
+const DAY = 86400000;
+function toN(s){ if(!s) return null; const [y,m,d]=String(s).slice(0,10).split('-').map(Number); return Math.round(Date.UTC(y,m-1,d)/DAY); }
+function toS(n){ return n==null ? '' : new Date(n*DAY).toISOString().slice(0,10); }
+function dow(n){ return new Date(n*DAY).getUTCDay(); }
+
+function makeCal(feriados){
+  const HOL = new Set((feriados||[]).map(f=>toN(f.data)).filter(x=>x!=null));
+  const isWD = n => { const w=dow(n); return w!==0 && w!==6 && !HOL.has(n); };
+  // WORKDAY do Excel
+  const workday = (d,n) => { if(n===0) return d; const s=n>0?1:-1; let k=Math.abs(n); while(k>0){ d+=s; if(isWD(d)) k--; } return d; };
+  // NETWORKDAYS do Excel (inclusivo; negativo se a>b)
+  const nwd = (a,b) => { if(a>b) return -nwd(b,a); let c=0; for(let d=a; d<=b; d++) if(isWD(d)) c++; return c; };
+  const desvio = (base,real) => real>base ? nwd(base,real)-1 : real<base ? -(nwd(real,base)-1) : 0;
+  return { isWD, workday, nwd, desvio, HOL };
+}
+
+function compute(cfg, tarefas, diario, today){
+  const cal = makeCal(cfg.feriados);
+  const { workday, nwd, desvio } = cal;
+  const C2 = toN(cfg.inicio) ?? today;
+  const T = [...tarefas].sort((a,b)=>(a.ordem??a.id)-(b.ordem??b.id));
+  const byId = new Map(T.map(t=>[Number(t.id),t]));
+  const agg = new Map();
+  for(const e of diario){
+    const id=Number(e.id), d=toN(e.data); if(d==null||!byId.has(id)) continue;
+    let a=agg.get(id); if(!a){ a={sum:0,min:d,max:d,n:0}; agg.set(id,a); }
+    a.sum += Number(e.pct)||0; a.min=Math.min(a.min,d); a.max=Math.max(a.max,d); a.n++;
+  }
+  const nwdStart = workday(Math.max(C2,today)-1, 1);
+  const R = new Map(), visiting = new Set();
+  function calc(t){
+    const id=Number(t.id);
+    if(R.has(id)) return R.get(id);
+    if(visiting.has(id)) return null;
+    visiting.add(id);
+    const dur = Number(t.dur)||0, lag = Number(t.lag)||0;
+    const a = agg.get(id);
+    const Oraw = a ? a.sum : 0;
+    const O = Math.max(0, Math.min(1, Oraw));
+    const Ti = a ? a.min : null;
+    const Ui = (a && Oraw >= 1-1e-9) ? a.max : null;
+    let predK=null, check='OK';
+    for(const p of (t.pred||[])){
+      const pt = byId.get(Number(p));
+      if(!pt){ check='ID inválido'; continue; }
+      const r = calc(pt);
+      if(!r){ check='Vínculo circular'; continue; }
+      predK = predK==null ? r.K : Math.max(predK, r.K);
+    }
+    let J;
+    if(Ti!=null) J = Ti;
+    else if(dur===0) J = Math.max(predK==null ? 0 : workday(predK, lag), C2);
+    else J = Math.max(nwdStart, predK==null ? 0 : workday(predK, lag+1));
+    let K;
+    if(Ui!=null) K = Ui;
+    else if(Ti!=null){
+      const rem = Math.ceil(dur*(1-Oraw) - 1e-9);
+      const base = Math.max(Ti, nwdStart);
+      K = rem<=0 ? base : workday(base, rem-1);
+    } else K = dur<=0 ? J : workday(J, dur-1);
+    const Rb = toN(t.ib) ?? J, Sb = toN(t.tb) ?? K;
+    const V = desvio(Sb, K);
+    let W;
+    if(dur===0) W = K<today ? 'Concluído' : (V>0 ? 'Marco com atraso' : 'Marco no prazo');
+    else if(Oraw >= 1-1e-9) W = 'Concluído';
+    else if(Ti!=null) W = V>0 ? 'Em andamento – atrasado' : 'Em andamento';
+    else W = Rb<today ? 'Não iniciado – atrasado' : 'A iniciar';
+    const X = today<Rb ? 0 : (dur===0 || today>=Sb) ? 1 : nwd(Rb,today)/nwd(Rb,Sb);
+    const res = { t, id, dur, J, K, R:Rb, S:Sb, O, Oraw, Ti, Ui, V, W, X, check, n: a?a.n:0 };
+    visiting.delete(id);
+    R.set(id,res);
+    return res;
+  }
+  const rows = T.map(t => calc(t) || { t, id:Number(t.id), dur:Number(t.dur)||0, J:C2, K:C2, R:C2, S:C2, O:0, Oraw:0, Ti:null, Ui:null, V:0, W:'A iniciar', X:0, check:'Vínculo circular', n:0 });
+
+  // ---- Resumo
+  const sumD = rows.reduce((s,r)=>s+r.dur,0) || 1;
+  const prev = rows.reduce((s,r)=>s+r.dur*r.X,0)/sumD;
+  const real = rows.reduce((s,r)=>s+r.dur*r.O,0)/sumD;
+  const fimBase = Math.max(...rows.map(r=>r.S)), fimReprog = Math.max(...rows.map(r=>r.K));
+  const atraso = desvio(fimBase, fimReprog);
+  const cnt = w => rows.filter(r=>r.W===w).length;
+  const grupos = [];
+  for(const r of rows) if(!grupos.includes(r.t.grupo)) grupos.push(r.t.grupo);
+  const porGrupo = grupos.map(g=>{
+    const rs = rows.filter(r=>r.t.grupo===g);
+    const d = rs.reduce((s,r)=>s+r.dur,0)||1;
+    const b = Math.max(...rs.map(r=>r.S)), k = Math.max(...rs.map(r=>r.K));
+    const p = rs.reduce((s,r)=>s+r.dur*r.X,0)/d, q = rs.reduce((s,r)=>s+r.dur*r.O,0)/d;
+    return { grupo:g, n:rs.length, inicio:Math.min(...rs.map(r=>r.J)), fimBase:b, fimReprog:k, atraso:desvio(b,k), prev:p, real:q, desvio:q-p,
+      atrasados: rs.filter(r=>/atrasado|com atraso/.test(r.W)).length };
+  });
+  const resumo = {
+    hoje: today, inicio: C2, fimBase, fimReprog, atraso, atrasoCorridos: fimReprog-fimBase,
+    restBase: Math.max(0, nwd(today, fimBase)), restReprog: Math.max(0, nwd(today, fimReprog)),
+    situacao: atraso>0 ? `ATRASADA (+${atraso} d.u.)` : atraso<0 ? `ADIANTADA (${atraso} d.u.)` : 'NO PRAZO',
+    prev, real, desvio: real-prev,
+    total: rows.length, concluidos: cnt('Concluído'), andamento: cnt('Em andamento'), andamentoAtras: cnt('Em andamento – atrasado'),
+    naoIniciadoAtras: cnt('Não iniciado – atrasado'), aIniciar: cnt('A iniciar'), marcos: rows.filter(r=>r.W.startsWith('Marco')).length,
+    duracaoTotal: nwd(C2, fimReprog), meses: Math.round((fimReprog-C2)/30.4*10)/10,
+    porGrupo, top: rows.filter(r=>r.V>0).sort((a,b)=>b.V-a.V || a.id-b.id).slice(0,20)
+  };
+  return { rows, byRes: R, resumo, grupos, cal };
+}
+
+// Acompanhamento semanal (previsto x realizado, linha de base)
+function semana(ctx, diario, refDay, today){
+  const { cal, rows } = ctx;
+  const seg = refDay - ((dow(refDay)+6)%7), sex = seg+4;
+  const dias = [0,1,2,3,4].map(i=>seg+i);
+  const ent = diario.filter(e=>{ const d=toN(e.data); return d>=seg && d<=sex; });
+  const lista = rows.filter(r=>r.R<=sex && r.S>=seg && r.dur>0).map(r=>{
+    const G = r.S<=sex ? 1 : r.R>sex ? 0 : cal.nwd(r.R,sex)/cal.nwd(r.R,r.S);
+    const H = Math.min(1, diario.filter(e=>Number(e.id)===r.id && toN(e.data)<=sex).reduce((s,e)=>s+(Number(e.pct)||0),0));
+    const meus = ent.filter(e=>Number(e.id)===r.id);
+    const dd = dias.map(d=>({ d, prev: d>=r.R && d<=r.S && cal.isWD(d), real: meus.filter(e=>toN(e.data)===d).reduce((s,e)=>s+(Number(e.pct)||0),0), tem: meus.some(e=>toN(e.data)===d) }));
+    const semAp = dd.filter(x=>x.prev && x.d<=today && !x.tem).length;
+    const fora = meus.filter(e=>{ const d=toN(e.data); return d<r.J || d>r.K; }).length;
+    const st = H>=1-1e-9 ? 'Concluído' : (H < G-0.005 ? 'Atrasado' : 'Em dia');
+    return { r, G, H, desv:H-G, dd, semAp, fora, st };
+  });
+  return { seg, sex, dias, lista, semanaN: Math.floor((seg-(ctx.resumo.inicio-((dow(ctx.resumo.inicio)+6)%7)))/7)+1,
+    foraTotal: ent.filter(e=>{ const r=ctx.byRes.get(Number(e.id)); const d=toN(e.data); return r && (d<r.J||d>r.K); }).length,
+    pessoas: ent.reduce((s,e)=>s+(Number(e.pessoas)||0),0) };
+}
+
+if(typeof module!=='undefined') module.exports={compute,semana,toN,toS,makeCal};
+
+</script>
+<script>
+// ================= Estado =================
+const S = { cfg:null, tarefas:[], diario:[], loaded:{cfg:false,t:false,d:false}, canWrite:null, readOnly:false, ctx:null,
+  view:'resumo', f:{grupo:'',status:'',q:'',modo:'lista'}, diaSel:null, semRef:null, names:{}, myId:null };
+let db=null, user=null;
+const $ = s => document.querySelector(s);
+const esc = s => String(s??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function hojeN(){ const d=new Date(); return Math.round(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/86400000); }
+const DS=['dom','seg','ter','qua','qui','sex','sáb'];
+function fd(n,yy=true){ if(n==null) return '—'; const d=new Date(n*86400000); const s=String(d.getUTCDate()).padStart(2,'0')+'/'+String(d.getUTCMonth()+1).padStart(2,'0'); return yy? s+'/'+String(d.getUTCFullYear()).slice(2):s; }
+function fdw(n){ return DS[new Date(n*86400000).getUTCDay()]+' '+fd(n); }
+const pct = (x,d=0) => (x*100).toFixed(d).replace('.',',')+'%';
+function toast(m){ const t=document.createElement('div'); t.className='toast'; t.textContent=m; document.body.appendChild(t); setTimeout(()=>t.remove(),2600); }
+function statusPill(w){
+  const map={'Concluído':'p-ok','Em andamento':'p-info','Em andamento – atrasado':'p-bad','Não iniciado – atrasado':'p-bad','A iniciar':'p-gray','Marco no prazo':'p-marco','Marco com atraso':'p-bad','Atrasado':'p-bad','Em dia':'p-ok'};
+  return `<span class="pill ${map[w]||'p-gray'}">${esc(w)}</span>`;
+}
+
+// ================= Dados =================
+function recompute(){
+  if(!S.cfg || !S.tarefas.length){ S.ctx=null; return; }
+  S.ctx = compute(S.cfg, S.tarefas, S.diario, hojeN());
+}
+let rq=false;
+function schedule(){ if(rq) return; rq=true; requestAnimationFrame(()=>{ rq=false; recompute(); render(); }); }
+
+async function boot(){
+  const loadTimer = setTimeout(()=>{ if(!(S.loaded.cfg&&S.loaded.t&&S.loaded.d)){ setLive('warn','Sem conexão com os dados ainda'); if(!S.tarefas.length) $('#app').innerHTML='<div class="empty">Não foi possível carregar os dados ainda. Verifique sua conexão.</div>'; } },10000);
+  try{ db = await claude.use('db'); }catch(e){ db=null; }
+  try{ user = await claude.use('user'); }catch(e){ user=null; }
+  if(!db){ clearTimeout(loadTimer); setLive('', 'Indisponível'); $('#app').innerHTML='<div class="empty">Entre na sua conta do Claude para ver e atualizar a obra.</div>'; return; }
+  if(user){
+    try{ S.canWrite = await user.can('data.write'); }catch(e){ S.canWrite=null; }
+    try{ S.canEdit = await user.canEdit(); }catch(e){ S.canEdit=null; }
+    try{ S.myId = await user.id(); }catch(e){}
+  }
+  if(S.canWrite===false || window.MIRROR) S.readOnly=true;
+  const done = () => { if(S.loaded.cfg&&S.loaded.t&&S.loaded.d){ clearTimeout(loadTimer); setLive('on', window.MIRROR?'Espelho':'Ao vivo'); } };
+  const onErr = e => { clearTimeout(loadTimer); setLive('warn', e && e.code==='revoked' ? 'Acesso encerrado' : 'Conexão interrompida — recarregue a página'); };
+  db.doc('config/obra').onSnapshot(s=>{ S.cfg = s.exists ? s.data() : null; if(!s.metadata.fromCache){S.loaded.cfg=true; done();} schedule(); }, onErr);
+  db.collection('tarefas').onSnapshot(q=>{ const all=q.docs.map(d=>({...d.data(), _doc:d.id})); S.maxId=Math.max(0,...all.map(t=>Number(t.id)||0)); S.tarefas = all.filter(t=>!t.excluido); if(!q.metadata.fromCache){S.loaded.t=true; done();} schedule(); }, onErr);
+  db.collection('realizado').onSnapshot(q=>{ S.snaps=q.docs.map(d=>({...d.data(),_doc:d.id})); schedule(); }, onErr);
+  db.collection('custos').onSnapshot(q=>{ S.custos=q.docs.map(d=>({...d.data(),_doc:d.id})); schedule(); }, onErr);
+  db.collection('vinculos').onSnapshot(q=>{ const v={}; q.docs.forEach(d=>{ const x=d.data(); if(x&&x.cod) v[x.cod]=x; }); S.vinc=v; schedule(); }, onErr);
+  if(!window.MIRROR) loadOrc();
+  db.collection('diario').onSnapshot(q=>{ S.diario = q.docs.map(d=>({...d.data(), _doc:d.id})).filter(e=>!e.excluido); if(!q.metadata.fromCache){S.loaded.d=true; done();} loadNames(); schedule(); }, onErr);
+}
+function setLive(c,t){ $('#liveDot').className='dot '+c; $('#liveTxt').textContent=t; }
+async function loadNames(){
+  if(!user) return;
+  const ids=[...new Set(S.diario.map(e=>e.autor).filter(Boolean))].filter(i=>!(i in S.names));
+  if(!ids.length) return;
+  try{ const ps = await user.profiles(ids); for(const i of ids){ S.names[i] = (ps&&ps[i]&&ps[i].name)||''; } schedule(); }catch(e){}
+}
+async function guard(fn, cfgOnly){
+  if(S.readOnly){ toast('Você tem acesso só de leitura.'); return false; }
+  try{ await fn(); return true; }
+  catch(e){
+    if(e && e.code==='invalid_argument' && cfgOnly){ S.canEdit=false; toast('Só quem é Editor da página pode alterar os ajustes da obra.'); render(); }
+    else if(e && e.code==='invalid_argument'){ S.readOnly=true; toast('Não foi possível salvar: seu acesso é só de leitura.'); render(); }
+    else if(e && e.code==='quota_exceeded'){ toast('Limite de armazenamento atingido.'); }
+    else toast('Não foi possível salvar. Tente de novo.');
+    return false;
+  }
+}
+
+// ================= Roteamento =================
+function route(){ const h=(location.hash||'#resumo').slice(1); S.view=(window.MIRROR?['resumo','cronograma','diario','semana']:['resumo','cronograma','diario','semana','financeiro','ajustes']).includes(h)?h:'resumo';
+  document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('on',a.dataset.v===S.view)); render(); window.scrollTo(0,0); }
+window.addEventListener('hashchange', route);
+
+// ================= Render =================
+function render(){
+  if(S.cfg && S.cfg.nome) $('#hNome').textContent = S.cfg.nome;
+  const app=$('#app');
+  const allLoaded = S.loaded.cfg&&S.loaded.t&&S.loaded.d;
+  if(!S.ctx){
+    if(S.view==='ajustes'){ app.innerHTML = vAjustes(); bindAjustes(); return; }
+    app.innerHTML = allLoaded ? '<div class="empty">Nenhum serviço cadastrado ainda.<br><span class="small">Cadastre os serviços na aba Cronograma.</span>'+(S.cfg?'':'<br><br>Configure a obra em <a href="#ajustes">Ajustes</a>.')+'</div>' : '<div class="empty">Carregando dados da obra…</div>';
+    if(allLoaded && S.cfg && !S.readOnly) app.innerHTML += '<div style="text-align:center"><button class="btn pri" onclick="editTask(null)">+ Novo serviço</button></div>';
+    
+    return;
+  }
+  const ro = window.MIRROR ? `<div class="ro-note">Espelho somente leitura · dados atualizados em ${esc(window.MIRROR_SYNC||'')}</div>` : S.readOnly ? '<div class="ro-note">Você está vendo a obra no modo leitura. Peça ao dono para te dar acesso de colaborador para lançar no diário.</div>' : '';
+  // preserve focus on search
+  const act = document.activeElement; const actId = act && act.id; const selS = act && act.selectionStart;
+  if(S.view==='resumo') app.innerHTML = ro+vResumo();
+  else if(S.view==='cronograma') app.innerHTML = ro+vCrono();
+  else if(S.view==='diario') app.innerHTML = ro+vDiario();
+  else if(S.view==='semana') app.innerHTML = ro+vSemana();
+  else if(S.view==='financeiro') app.innerHTML = ro+vFin();
+  else if(S.view==='ajustes'){ app.innerHTML = ro+vAjustes(); bindAjustes(); }
+  if(actId){ const el=document.getElementById(actId); if(el){ el.focus(); try{ if(selS!=null) el.setSelectionRange(selS,selS);}catch(e){} } }
+  if(S.view==='cronograma' && S.f.modo==='gantt') scrollGanttToday();
+}
+
+function compBar(label, v, color){
+  return `<div class="row"><span class="muted">${label}</span><div class="bar"><i style="width:${Math.min(100,v*100)}%;background:${color}"></i></div><b class="num">${pct(v,1)}</b></div>`;
+}
+
+function vResumo(){
+  const R=S.ctx.resumo;
+  const sit = R.atraso>0?'p-bad':R.atraso<0?'p-ok':'p-ok';
+  const g = R.porGrupo.map(p=>`<tr class="click" onclick="goGrupo('${esc(p.grupo).replace(/'/g,"\\'")}')">
+    <td class="grp">${esc(p.grupo)}</td><td class="num">${fd(p.fimBase)}</td><td class="num">${fd(p.fimReprog)}</td>
+    <td class="num" style="color:${p.atraso>0?'var(--bad)':p.atraso<0?'var(--ok)':'inherit'}">${p.atraso>0?'+':''}${p.atraso}</td>
+    <td style="min-width:140px"><div class="bar" title="Previsto ${pct(p.prev,1)}"><i style="width:${p.prev*100}%;background:var(--gray-bar)"></i><i style="width:${p.real*100}%;background:var(--blue-bar);height:4px;top:2px"></i></div></td>
+    <td class="num">${pct(p.prev,1)}</td><td class="num"><b>${pct(p.real,1)}</b></td>
+    <td class="num" style="color:${p.desvio<-0.0005?'var(--bad)':'var(--ok)'}">${p.desvio>0?'+':''}${pct(p.desvio,1)}</td>
+    <td class="num">${p.atrasados?`<span class="pill p-bad">${p.atrasados}</span>`:'0'}</td></tr>`).join('');
+  const top = R.top.length ? R.top.map(r=>`<tr class="click" onclick="editTask(${r.id})"><td class="mono">${r.id}</td><td>${esc(r.t.grupo)}</td><td class="svc">${esc(r.t.servico)}</td><td>${statusPill(r.W)}</td><td class="num">${fd(r.S)}</td><td class="num">${fd(r.K)}</td><td class="num" style="color:var(--bad);font-weight:600">+${r.V}</td><td class="num">${pct(r.O)}</td></tr>`).join('')
+    : '<tr><td colspan="8" class="empty">Nenhum serviço com término após a linha de base.</td></tr>';
+  return `
+  <div class="grid" style="gap:14px">
+    <div class="card banner">
+      <div><div class="small muted">Situação da obra em ${fd(R.hoje)}</div><div class="big">${esc(R.situacao)}</div></div>
+      <span class="pill ${sit}" style="font-size:13px">${R.atraso>0?`${R.atrasoCorridos} dias corridos de atraso`:'Dentro do prazo'}</span>
+      <div style="margin-left:auto" class="small muted">Início ${fd(R.inicio)} · ${R.duracaoTotal} dias úteis · ${String(R.meses).replace('.',',')} meses</div>
+    </div>
+    ${vPredio()}
+    <div class="grid kpis">
+      <div class="card kpi"><div class="l">Término – linha de base</div><div class="v">${fd(R.fimBase)}</div><div class="s">${R.restBase} dias úteis restantes</div></div>
+      <div class="card kpi"><div class="l">Término – reprogramado</div><div class="v" style="color:${R.atraso>0?'var(--bad)':'inherit'}">${fd(R.fimReprog)}</div><div class="s">${R.restReprog} dias úteis restantes</div></div>
+      <div class="card kpi"><div class="l">Atraso (dias úteis)</div><div class="v" style="color:${R.atraso>0?'var(--bad)':'var(--ok)'}">${R.atraso>0?'+':''}${R.atraso}</div><div class="s">${R.atrasoCorridos} dias corridos</div></div>
+      <div class="card kpi"><div class="l">Desvio de avanço</div><div class="v" style="color:${R.desvio<-0.0005?'var(--bad)':'var(--ok)'}">${R.desvio>0?'+':''}${pct(R.desvio,1)}</div><div class="s">realizado − previsto</div></div>
+    </div>
+    <div class="grid two">
+      <div class="card">
+        <h3>Avanço físico (ponderado pela duração)</h3>
+        <div class="cmp">${compBar('Previsto',R.prev,'var(--gray-bar)')}${compBar('Realizado',R.real,'var(--blue-bar)')}</div>
+        <p class="hint" style="margin:10px 0 0">Previsto pela linha de base na data de hoje. Realizado vem dos lançamentos do Diário de obra.</p>
+      </div>
+      <div class="card">
+        <h3>Serviços (${R.total})</h3>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          ${[['Concluído',R.concluidos,'p-ok'],['Em andamento',R.andamento,'p-info'],['Em andamento – atrasado',R.andamentoAtras,'p-bad'],['Não iniciado – atrasado',R.naoIniciadoAtras,'p-bad'],['A iniciar',R.aIniciar,'p-gray'],['Marco',R.marcos,'p-marco']]
+            .map(([l,n,c])=>`<button class="pill ${c}" style="border:0;cursor:pointer;font-size:13px;padding:6px 12px" onclick="goStatus('${l}')">${n} · ${l}</button>`).join('')}
+        </div>
+      </div>
+    </div>
+    <div>
+      <h3 style="margin-top:6px">Por pavimento / grupo</h3>
+      <div class="tblwrap"><table>
+        <thead><tr><th>Pavimento / Grupo</th><th class="num">Término base</th><th class="num">Término reprog.</th><th class="num">Atraso (d.u.)</th><th>Avanço</th><th class="num">% previsto</th><th class="num">% realizado</th><th class="num">Desvio</th><th class="num">Atrasados</th></tr></thead>
+        <tbody>${g}
+        <tr style="background:var(--soft);font-weight:700"><td>OBRA COMPLETA</td><td class="num">${fd(R.fimBase)}</td><td class="num">${fd(R.fimReprog)}</td><td class="num">${R.atraso>0?'+':''}${R.atraso}</td><td></td><td class="num">${pct(R.prev,1)}</td><td class="num">${pct(R.real,1)}</td><td class="num">${R.desvio>0?'+':''}${pct(R.desvio,1)}</td><td class="num">${R.porGrupo.reduce((s,p)=>s+p.atrasados,0)}</td></tr>
+        </tbody></table></div>
+    </div>
+    <div>
+      <h3 style="margin-top:6px">Maiores desvios de término (top 20)</h3>
+      <div class="tblwrap"><table>
+        <thead><tr><th>ID</th><th>Pavimento</th><th>Serviço</th><th>Status</th><th class="num">Término base</th><th class="num">Término reprog.</th><th class="num">Atraso (d.u.)</th><th class="num">% feito</th></tr></thead>
+        <tbody>${top}</tbody></table></div>
+    </div>
+  </div>`;
+}
+
+// ================= Prédio (resumo visual) =================
+const ETAPAS=[
+  {k:'est',n:'Estrutura',a:'Estr.',m:['Estrutura','Fundações','Terraplenagem']},
+  {k:'alv',n:'Alvenaria',a:'Alv.',m:['Alvenaria']},
+  {k:'ins',n:'Instalações',a:'Inst.',m:['Instalações']},
+  {k:'imp',n:'Impermeabilização',a:'Imper.',m:['Impermeabilização']},
+  {k:'rev',n:'Revestimento',a:'Rev.',m:['Revestimento']},
+  {k:'ges',n:'Gesso',a:'Gesso',m:['Gesso']},
+  {k:'esq',n:'Esquadrias',a:'Esq.',m:['Esquadrias']},
+  {k:'cob',n:'Telhado',a:'Telh.',m:['Cobertura']},
+  {k:'pin',n:'Pintura',a:'Pint.',m:['Pintura']},
+  {k:'aca',n:'Acabamentos',a:'Acab.',m:['Acabamentos','Marcenaria','Limpeza']},
+];
+const ORDEM_PAV=['Ático','Cobertura','4º Pavimento','3º Pavimento','2º Pavimento','1º Pavimento','Térreo','Subsolo'];
+const FACHADA='Fachada e áreas comuns';
+function etapaDe(r){ const e=r.t.equipe||''; const x=ETAPAS.find(s=>s.m.includes(e)); if(x) return x.k; if(/MARCO/i.test(r.t.servico)||r.dur===0) return null; return 'outros'; }
+function cellStats(rs,h){
+  const d=rs.reduce((s,r)=>s+r.dur,0);
+  const real = d? rs.reduce((s,r)=>s+r.dur*r.O,0)/d : (rs.every(r=>r.O>=1)?1:0);
+  const prev = d? rs.reduce((s,r)=>s+r.dur*r.X,0)/d : 0;
+  const late = rs.some(r=>/atrasado|com atraso/.test(r.W));
+  const act = rs.some(r=>r.dur>0 && r.O<1 && (r.Ti!=null || (h>=r.J && h<=r.K)));
+  return {real,prev,late,act,n:rs.length,done:rs.length&&rs.every(r=>r.O>=1||(r.dur===0&&r.W==='Concluído'))};
+}
+function vPredio(){
+  const h=hojeN(); const rows=S.ctx.rows;
+  const FM = S.predioModo==='fin' && S.orc ? (S.fin=finCompute()) : null;
+  const grupos=S.ctx.grupos;
+  const pavs=[...grupos.filter(g=>g!==FACHADA && !ORDEM_PAV.includes(g)), ...ORDEM_PAV.filter(g=>grupos.includes(g))];
+  const usados=new Set(rows.filter(r=>r.t.grupo!==FACHADA).map(etapaDe).filter(Boolean));
+  const cols=[...ETAPAS.filter(e=>usados.has(e.k)), ...(usados.has('outros')?[{k:'outros',n:'Outros',a:'Outros'}]:[])];
+  S._cells={};
+  const win=(g,c)=>{
+    const rs=rows.filter(r=>r.t.grupo===g && etapaDe(r)===c.k);
+    if(!rs.length) return `<div class="win wall" title="${esc(g)} · ${c.n}: sem serviços"></div>`;
+    const st=cellStats(rs,h); const key=g+'|'+c.k; S._cells[key]={g,c:c.n,ids:rs.map(r=>r.id)};
+    if(FM){ const o=rs.reduce((s,r)=>s+(FM.valT.get(r.id)||0),0), a=rs.reduce((s,r)=>s+(FM.valT.get(r.id)||0)*r.O,0), cr=rs.reduce((s,r)=>s+(FM.custoT.get(r.id)||0),0);
+      if(!o) return `<div class="win wall" title="${esc(g)} · ${c.n}: sem orçamento vinculado"></div>`;
+      const over=cr>0&&cr>a*1.05; const cl=a>=o-1?'done':over?'late':'';
+      return `<div class="win ${cl}" onclick="openCell('${esc(key).replace(/'/g,"\\'")}')" title="${esc(g)} · ${c.n}\nOrçado ${fM(o)} · executado ${fM(a)}${cr?` · custo real ${fM(cr)}`:''}"><i style="height:${Math.round(a/o*100)}%;${cr?'':''}"></i>${cr?`<span class="act" style="background:var(--bad);animation:none" title="custo real"></span>`:''}<span style="position:absolute;inset:0;display:grid;place-items:center;font-size:9.5px;font-weight:700;color:#1d2329;opacity:.75">${(o/1e3).toFixed(0)}k</span></div>`; }
+    const cls=st.done?'done':st.late?'late':'';
+    return `<div class="win ${cls}" onclick="openCell('${esc(key).replace(/'/g,"\\'")}')" title="${esc(g)} · ${c.n}\n${pct(st.real)} feito (previsto ${pct(st.prev)})${st.late?' · com atraso':''}${st.act?' · em execução':''}"><i style="height:${Math.round(st.real*100)}%"></i>${st.act?'<span class="act"></span>':''}</div>`;
+  };
+  const info=g=>{
+    const rs=rows.filter(r=>r.t.grupo===g); const st=cellStats(rs,h);
+    if(FM){ const p=FM.pav.get(g)||{v:0,ea:0,cr:0}; return `<div class="bld-info"><div style="display:flex;justify-content:space-between;gap:4px"><b>${fM(p.v)}</b></div><div class="bar"><i style="width:${p.v?p.ea/p.v*100:0}%;background:var(--ok)"></i></div><div class="ph">exec. ${fM(p.ea)}${p.cr?` · gasto ${fM(p.cr)}`:''}</div></div>`; }
+    const frente = rs.filter(r=>r.dur>0 && r.O<1).sort((a,b)=>a.J-b.J||a.id-b.id)[0];
+    const atr = rs.filter(r=>/atrasado|com atraso/.test(r.W)).length;
+    return `<div class="bld-info"><div style="display:flex;justify-content:space-between;gap:4px"><b>${pct(st.real)}</b><span class="muted pv">prev. ${pct(st.prev)}</span></div>
+      <div class="bar"><i style="width:${st.prev*100}%;background:var(--gray-bar)"></i><i style="width:${st.real*100}%;background:${st.real>=1?'var(--ok)':'var(--blue-bar)'};height:3px;top:1.5px"></i></div>
+      <div class="ph" title="${frente?esc(frente.t.servico):''}">${st.done?'✓ concluído':frente?`${atr?`<span style="color:var(--bad)">${atr} atras.</span> · `:''}${esc(frente.t.servico)}`:''}</div></div>`;
+  };
+  const row=(g,extra='')=>`<div class="bld-row ${extra}"><div class="bld-lbl" onclick="goGrupo('${esc(g).replace(/'/g,"\\'")}')">${esc(g)}</div><div class="facade floor-line">${cols.map(c=>win(g,c)).join('')}</div>${info(g)}</div>`;
+  const acima = pavs.filter(g=>g!=='Subsolo'), abaixo=pavs.filter(g=>g==='Subsolo');
+  // fachada / áreas comuns
+  const fac = rows.filter(r=>r.t.grupo===FACHADA && r.dur>0);
+  const facHtml = fac.length ? `<div class="card" style="margin-top:14px;padding:12px 14px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><b class="small" style="cursor:pointer" onclick="goGrupo('${FACHADA}')">${FACHADA}</b><span class="small muted">${pct(cellStats(fac,h).real)} feito</span></div>
+     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px">${fac.map(r=>`<div onclick="editTask(${r.id})" style="cursor:pointer;border:1px solid ${/atrasado/.test(r.W)?'var(--bad)':'var(--line)'};border-radius:8px;padding:6px 8px;font-size:11.5px;position:relative;overflow:hidden;background:#fff"><div style="position:absolute;inset:auto 0 0 0;height:4px;background:#ece8e0"><div style="height:100%;width:${r.O*100}%;background:${r.O>=1?'var(--ok)':'var(--blue-bar)'}"></div></div>${esc(r.t.servico)}</div>`).join('')}</div></div>` : '';
+  // hoje
+  const hoje = rows.filter(r=>r.dur>0 && r.O<1 && h>=r.J && h<=r.K).sort((a,b)=>a.J-b.J);
+  const lancHoje = S.diario.filter(e=>toN(e.data)===h);
+  const pes = lancHoje.reduce((s,e)=>s+(Number(e.pessoas)||0),0);
+  const side = `<div class="card side-card" style="align-self:start">
+      <h4>Hoje na obra · ${fdw(h)}</h4>
+      <div class="small muted" style="margin-bottom:6px">${hoje.length} serviço${hoje.length===1?'':'s'} programado${hoje.length===1?'':'s'} · ${lancHoje.length} lançamento${lancHoje.length===1?'':'s'} · ${pes} pessoa${pes===1?'':'s'}</div>
+      <div style="max-height:360px;overflow:auto">${hoje.slice(0,30).map(r=>`<div class="today-item" onclick="editTask(${r.id})"><span class="tag">${esc((r.t.grupo||'').replace(' Pavimento','º pav').replace('ºº','º'))}</span><span>${esc(r.t.servico)}<br><span class="muted">${pct(r.O)} · ${r.W}</span></span></div>`).join('')||'<div class="muted small">Nada programado para hoje.</div>'}</div>
+      ${S.readOnly?'':'<button class="btn pri" style="width:100%;margin-top:10px;justify-content:center" onclick="location.hash=\'#diario\'">Lançar no diário</button>'}
+    </div>`;
+  const legend = `<div class="legend" style="margin:0 0 10px"><span><span class="w"></span>não iniciado</span><span><span class="w" style="background:linear-gradient(to top,var(--blue-bar) 50%,#f3f0ea 50%)"></span>em andamento (altura = % feito)</span><span><span class="w" style="background:var(--ok);border-color:#2f8a57"></span>concluído</span><span><span class="w" style="border:2px solid var(--bad)"></span>com atraso</span><span><span class="w" style="border-style:dashed;background:none"></span>sem serviço</span><span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-right:5px"></span>em execução</span></div>`;
+  return `<div class="predio-wrap">
+    <div class="card" style="padding:16px 12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 4px 4px"><h3 style="margin:0">O prédio hoje</h3>${window.MIRROR?'':`<div class="seg"><button class="${FM?'':'on'}" onclick="S.predioModo='fis';render()">Físico</button><button class="${FM?'on':''}" onclick="S.predioModo='fin';if(!S.orc)loadOrc();render()">Financeiro</button></div>`}</div>
+      <div class="small muted" style="margin:0 0 10px 4px">${FM?'Cada janela mostra o valor orçado da etapa no pavimento; o preenchimento é o quanto já foi executado. Borda vermelha: custo real acima do executado.':'Cada janela é uma etapa do pavimento. Toque para ver os serviços.'}</div>
+      ${FM?'':legend}
+      <div class="bld" style="--cols:${cols.length}">
+        <div class="bld-row"><div></div><div class="colhdr">${cols.map(c=>`<span title="${c.n}">${c.a}</span>`).join('')}</div><div></div></div>
+        <div class="bld-row"><div></div><div class="roof"></div><div></div></div>
+        ${acima.map(g=>row(g)).join('')}
+        <div class="bld-row"><div></div><div class="ground"></div><div class="small muted" style="align-self:center">nível do solo</div></div>
+        ${abaixo.map(g=>row(g,'under')).join('')}
+      </div>
+      ${facHtml}
+    </div>
+    ${side}
+  </div>`;
+}
+function openCell(key){
+  const c=S._cells&&S._cells[key]; if(!c) return;
+  const rs=c.ids.map(i=>S.ctx.byRes.get(i));
+  openModal(`<h2>${esc(c.g)} · ${esc(c.c)}</h2>
+    <div class="tblwrap" style="max-height:60vh"><table><thead><tr><th>ID</th><th>Serviço</th><th class="num">Término</th><th>% feito</th><th>Status</th></tr></thead><tbody>
+    ${rs.map(r=>`<tr class="click" onclick="editTask(${r.id})"><td class="mono">${r.id}</td><td>${esc(r.t.servico)}</td><td class="num">${fd(r.K)}${r.V>0?`<div class="small" style="color:var(--bad)">+${r.V} d.u.</div>`:''}</td><td style="min-width:80px"><div class="bar"><i style="width:${r.O*100}%;background:${r.O>=1?'var(--ok)':'var(--blue-bar)'}"></i></div><span class="small">${pct(r.O)}</span></td><td>${statusPill(r.W)}</td></tr>`).join('')}
+    </tbody></table></div><div class="actions"><button class="btn" onclick="closeModal()">Fechar</button></div>`);
+}
+
+
+// ================= Financeiro (orçamento x realizado) =================
+S.orc=null; S.custos=[]; S.vinc={}; S.finF={aberto:{}, q:'', mes:''}; S.fin=null;
+const BRL = new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'});
+const fR = v => BRL.format(v||0);
+function fM(v){ const a=Math.abs(v||0), s=v<0?'−':''; if(a>=1e6) return s+'R$ '+(a/1e6).toFixed(2).replace('.',',')+' mi'; if(a>=1e3) return s+'R$ '+Math.round(a/1e3).toLocaleString('pt-BR')+' mil'; return s+BRL.format(a); }
+const MESES=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+function mesIdx(n){ const d=new Date(n*86400000); return d.getUTCFullYear()*12+d.getUTCMonth(); }
+function mesLbl(i){ return MESES[i%12]+'/'+String(Math.floor(i/12)).slice(2); }
+function mesFim(i){ return Math.round(Date.UTC(Math.floor(i/12), i%12+1, 0)/86400000); }
+async function loadOrc(){
+  try{ const r = await fetch('orcamento.json'); S.orc = await r.json(); }catch(e){ S.orc=false; }
+  schedule();
+}
+function pacEf(p){ const o=S.vinc[p.cod]; return o ? {...p, modo:o.modo||p.modo, ids:Array.isArray(o.ids)?o.ids.map(Number):p.ids, editado:true} : p; }
+
+function finCompute(){
+  const ctx=S.ctx, orc=S.orc; if(!ctx||!orc) return null;
+  const cal=ctx.cal, h=hojeN(), R=ctx.resumo, by=ctx.byRes;
+  const ini=R.inicio;
+  // progresso por tarefa ao longo do tempo (diário)
+  const entr = new Map();
+  for(const e of S.diario){ const id=Number(e.id), d=toN(e.data); if(d==null) continue; if(!entr.has(id)) entr.set(id,[]); entr.get(id).push([d, Number(e.pct)||0]); }
+  const Oat = (id,t) => { const l=entr.get(id); if(!l) return 0; let s=0; for(const [d,p] of l) if(d<=t) s+=p; return Math.min(1,s); };
+  const sumD = ctx.rows.reduce((s,r)=>s+r.dur,0)||1;
+  const fisAt = t => ctx.rows.reduce((s,r)=>s+r.dur*Oat(r.id,t),0)/sumD;
+  // alocação de cada pacote nas tarefas
+  const valT=new Map(), pacs=[];
+  for(const p0 of orc.pacotes){
+    const p=pacEf(p0); let tar=[];
+    if(p.modo==='tarefas'){ tar=p.ids.map(i=>by.get(i)).filter(Boolean); if(!tar.length) p.modo='tempo'; }
+    let w=tar.reduce((s,r)=>s+Math.max(r.dur,0),0);
+    const parts = tar.map(r=>({r, v: w? p.v*r.dur/w : p.v/tar.length})).filter(x=>x.v>0);
+    for(const x of parts) valT.set(x.r.id,(valT.get(x.r.id)||0)+x.v);
+    pacs.push({...p, parts});
+  }
+  // custos por pacote
+  const custoP=new Map(); let CR=0;
+  const snap=ultimoSnap(h), snapD=snap?toN(snap.data):-1e9;
+  if(snap){ const sc=snapCusto(snap); for(const [k,v] of sc.porP){ custoP.set(k,v); CR+=v; } }
+  const manuais=S.custos.filter(c=>{ const d=toN(c.data); return d!=null && d>snapD && d<=h; });
+  for(const c of manuais){ const v=Number(c.valor)||0; CR+=v; custoP.set(c.pacote,(custoP.get(c.pacote)||0)+v); }
+  // meses
+  let m0=mesIdx(ini), m1=mesIdx(Math.max(R.fimBase,R.fimReprog));
+  for(const p of pacs) for(const x of p.parts){ m0=Math.min(m0,mesIdx(x.r.R),mesIdx(x.r.J)); }
+  for(const c of S.custos.concat(S.snaps)){ const d=toN(c.data); if(d!=null){ m0=Math.min(m0,mesIdx(d)); m1=Math.max(m1,mesIdx(d)); } }
+  const nM=m1-m0+1, base=new Array(nM).fill(0), rep=new Array(nM).fill(0), real=new Array(nM).fill(0);
+  const spread=(v,a,b,arr)=>{ if(b<a) b=a; let n=0; for(let d=a;d<=b;d++) if(cal.isWD(d)) n++; if(!n){ arr[mesIdx(a)-m0]+=v; return; } for(let d=a;d<=b;d++) if(cal.isWD(d)) arr[mesIdx(d)-m0]+=v/n; };
+  const pvTo=(v,a,b,t)=>{ if(t<a) return 0; if(t>=b) return v; const n=cal.nwd(a,b); return n? v*cal.nwd(a,t)/n : v; };
+  let VP=0, VA=0;
+  for(const p of pacs){
+    let pv=0, ea=0;
+    if(p.modo==='tempo'){
+      spread(p.v, ini, R.fimBase, base); spread(p.v, ini, R.fimReprog, rep);
+      pv = pvTo(p.v, ini, R.fimBase, h); ea = p.v*R.real;
+    } else for(const x of p.parts){
+      spread(x.v, x.r.R, x.r.S, base); spread(x.v, x.r.J, x.r.K, rep);
+      pv += pvTo(x.v, x.r.R, x.r.S, h); ea += x.v*x.r.O;
+    }
+    p.pv=pv; p.ea=ea; p.cr=custoP.get(p.cod)||0; p.fis = p.v? ea/p.v : 0;
+    VP+=pv; VA+=ea;
+  }
+  const realCum=[]; const snapTot=new Map(S.snaps.map(x=>[x,snapCusto(x).tot]));
+  for(let i=0;i<nM;i++){ const t=Math.min(mesFim(m0+i),h); const sn=ultimoSnap(t); const sd=sn?toN(sn.data):-1e9; let v=sn?snapTot.get(sn):0; for(const c of S.custos){ const d=toN(c.data); if(d!=null&&d>sd&&d<=t) v+=Number(c.valor)||0; } realCum.push(v); }
+  // curva de valor agregado mês a mês (até hoje)
+  const mh=mesIdx(h)-m0, agr=[];
+  for(let i=0;i<=Math.min(mh,nM-1);i++){
+    const t=Math.min(mesFim(m0+i),h); const fis=fisAt(t); let s=0;
+    for(const p of pacs){ if(p.modo==='tempo') s+=p.v*fis; else for(const x of p.parts) s+=x.v*Oat(x.r.id,t); }
+    agr.push(s);
+  }
+  const cum=a=>{ let s=0; return a.map(x=>s+=x); };
+  // por grupo (2º nível do orçamento)
+  const grp=new Map();
+  for(const p of pacs){ const k=p.macro==='1'?p.etapa:p.macro; if(!grp.has(k)) grp.set(k,{cod:k,v:0,pv:0,ea:0,cr:0,pacs:[]}); const g=grp.get(k); g.v+=p.v; g.pv+=p.pv; g.ea+=p.ea; g.cr+=p.cr; g.pacs.push(p); }
+  const nomes=new Map(orc.grupos.map(g=>[g.cod,g.nome]));
+  for(const g of grp.values()) g.nome=nomes.get(g.cod)||g.cod;
+  // por pavimento (rateio pelas tarefas) + custo por tarefa
+  const custoT=new Map(), pav=new Map(); const addP=(k,f,v)=>{ if(!pav.has(k)) pav.set(k,{v:0,ea:0,cr:0}); pav.get(k)[f]+=v; };
+  for(const p of pacs){
+    if(p.modo==='tempo'){ addP('Indiretos (canteiro, equipe, taxa)','v',p.v); addP('Indiretos (canteiro, equipe, taxa)','ea',p.ea); addP('Indiretos (canteiro, equipe, taxa)','cr',p.cr); continue; }
+    for(const x of p.parts){ const sh=x.v/p.v; const ct=p.cr*sh; custoT.set(x.r.id,(custoT.get(x.r.id)||0)+ct); addP(x.r.t.grupo,'v',x.v); addP(x.r.t.grupo,'ea',x.v*x.r.O); addP(x.r.t.grupo,'cr',ct); }
+  }
+  const IDC = CR>0 ? VA/CR : null, IDP = VP>0 ? VA/VP : null;
+  return { BAC:orc.total, VP, VA, CR, IDC, IDP, EAC: CR>0 ? CR + Math.max(0, orc.total - VA) : null,
+    meses:{m0,nM,mh,base:cum(base),rep:cum(rep),real:realCum,agr}, snap, grupos:[...grp.values()], pacs, valT, custoT, pav };
+}
+
+// ---------- tela Financeiro
+function chartS(F){
+  const M=F.meses, W=820, H=300, pl=64, pr=14, pt=14, pb=34;
+  const max = Math.max(F.BAC, M.rep[M.nM-1]||0, M.real[M.real.length-1]||0)*1.05 || 1;
+  const x=i=>pl+(W-pl-pr)*(M.nM<=1?0:i/(M.nM-1)), y=v=>pt+(H-pt-pb)*(1-v/max);
+  const path=(a,n)=>a.slice(0,n??a.length).map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+','+y(v).toFixed(1)).join('');
+  let g=''; for(let k=0;k<=5;k++){ const v=max/5*k; g+=`<line x1="${pl}" x2="${W-pr}" y1="${y(v)}" y2="${y(v)}" stroke="#ece8e0"/><text x="${pl-8}" y="${y(v)+4}" text-anchor="end" font-size="11" fill="#6b7177">${(v/1e6).toFixed(0)} mi</text>`; }
+  const step=Math.max(1,Math.ceil(M.nM/12)); let xl=''; for(let i=0;i<M.nM;i+=step) xl+=`<text x="${x(i)}" y="${H-12}" text-anchor="middle" font-size="11" fill="#6b7177">${mesLbl(M.m0+i)}</text>`;
+  const hx = M.mh>=0&&M.mh<M.nM ? x(M.mh) : null;
+  const hasReal = F.CR>0;
+  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block" role="img" aria-label="Curva S do orçamento">
+    ${g}${xl}
+    ${hx!=null?`<line x1="${hx}" x2="${hx}" y1="${pt}" y2="${H-pb}" stroke="#e08a1e" stroke-width="2" stroke-dasharray="4 3"/><text x="${hx+4}" y="${pt+10}" font-size="11" fill="#c77a0a" font-weight="600">hoje</text>`:''}
+    <line x1="${pl}" x2="${W-pr}" y1="${y(F.BAC)}" y2="${y(F.BAC)}" stroke="#1f3a4d" stroke-dasharray="2 4" opacity=".5"/><text x="${W-pr}" y="${y(F.BAC)-5}" text-anchor="end" font-size="11" fill="#1f3a4d">orçamento ${fM(F.BAC)}</text>
+    <path d="${path(M.base)}" fill="none" stroke="#b5ad9f" stroke-width="2.5"/>
+    <path d="${path(M.rep)}" fill="none" stroke="#2f6fa8" stroke-width="2.5" stroke-dasharray="6 4"/>
+    <path d="${path(M.agr)}" fill="none" stroke="#2f8a57" stroke-width="3"/>
+    ${hasReal?`<path d="${path(M.real,M.mh+1)}" fill="none" stroke="#c2412d" stroke-width="3"/>`:''}
+  </svg>
+  <div class="legend" style="margin-top:6px"><span><i style="background:#b5ad9f"></i>Previsto (linha de base)</span><span><i style="background:#2f6fa8"></i>Reprogramado</span><span><i style="background:#2f8a57"></i>Agregado (executado × orçado)</span><span><i style="background:#c2412d"></i>Custo real lançado</span></div>`;
+}
+function vFin(){
+  if(S.orc===null){ loadOrc(); return '<div class="empty">Carregando orçamento…</div>'; }
+  if(S.orc===false) return '<div class="empty">Não foi possível carregar o orçamento.</div>';
+  const F=S.fin=finCompute(); if(!F) return '<div class="empty">Carregando…</div>';
+  const pctT = v => pct(v/F.BAC,1);
+  const kpi=(l,v,s,c)=>`<div class="card kpi"><div class="l">${l}</div><div class="v" style="${c?`color:${c}`:''};font-size:20px">${v}</div><div class="s">${s}</div></div>`;
+  const dPrazo=F.VA-F.VP, dCusto=F.VA-F.CR;
+  const semCusto = F.CR===0;
+  const grows = F.grupos.map(g=>{
+    const ab=S.finF.aberto[g.cod];
+    const sub = ab ? g.pacs.map(p=>`<tr class="click" onclick="openPac('${p.cod}')" style="background:#fcfbf8"><td style="padding-left:30px" class="small"><span class="mono muted">${p.cod}</span> ${esc(p.cam.split(' › ').slice(1).join(' › ')||p.nome)}${p.editado?' <span class="pill p-info" style="font-size:10px">vínculo ajustado</span>':''}${p.modo==='tempo'?' <span class="pill p-gray" style="font-size:10px">indireto</span>':''}</td><td class="num small">${fR(p.v)}</td><td class="num small">${pct(p.fis)}</td><td class="num small">${fM(p.pv)}</td><td class="num small">${fM(p.ea)}</td><td class="num small">${p.cr?fM(p.cr):'—'}</td><td class="num small">${fM(p.v-p.cr)}</td></tr>`).join('') : '';
+    return `<tr class="click" onclick="S.finF.aberto['${g.cod}']=!S.finF.aberto['${g.cod}'];render()"><td><span style="display:inline-block;width:14px;color:var(--muted)">${ab?'▾':'▸'}</span><span class="mono muted">${g.cod}</span> <b>${esc(g.nome)}</b></td><td class="num"><b>${fR(g.v)}</b><div class="small muted">${pctT(g.v)} do total</div></td>
+      <td style="min-width:110px"><div class="bar"><i style="width:${g.ea/g.v*100}%;background:var(--ok)"></i></div><span class="small">${pct(g.ea/g.v)}</span></td>
+      <td class="num">${fM(g.pv)}</td><td class="num">${fM(g.ea)}</td><td class="num" style="${g.cr>g.ea*1.05&&g.cr>0?'color:var(--bad);font-weight:700':''}">${g.cr?fM(g.cr):'—'}</td><td class="num">${fM(g.v-g.cr)}</td></tr>${sub}`;
+  }).join('');
+  const ordemP=[...ORDEM_PAV].reverse().concat([FACHADA]);
+  const pavs=[...F.pav.entries()].sort((a,b)=>{ const ia=ordemP.indexOf(a[0]), ib=ordemP.indexOf(b[0]); return (ia<0?99:ia)-(ib<0?99:ib); });
+  const maxP=Math.max(...pavs.map(p=>p[1].v));
+  const pavHtml = pavs.map(([k,p])=>`<div style="display:grid;grid-template-columns:150px 1fr 90px;gap:10px;align-items:center;padding:5px 0;font-size:12.5px"><div style="text-align:right;font-weight:600">${esc(k)}</div>
+    <div style="position:relative;height:18px;background:#f3f0ea;border-radius:4px;width:${Math.max(4,p.v/maxP*100)}%"><div style="position:absolute;inset:0 auto 0 0;width:${p.ea/p.v*100}%;background:var(--ok);border-radius:4px;opacity:.85"></div>${p.cr?`<div style="position:absolute;top:-3px;bottom:-3px;left:${Math.min(100,p.cr/p.v*100)}%;width:3px;background:var(--bad)" title="Custo real ${fM(p.cr)}"></div>`:''}</div>
+    <div class="num">${fM(p.v)}</div></div>`).join('');
+  const custosRec=[...S.custos].sort((a,b)=>(b.data||'').localeCompare(a.data||'')||(b.criadoEm||'').localeCompare(a.criadoEm||'')).slice(0,40);
+  const pacBy=new Map(S.orc.pacotes.map(p=>[p.cod,p]));
+  const cList = custosRec.length ? custosRec.map(c=>{ const p=pacBy.get(c.pacote); return `<div class="entry"><div><div class="t">${esc(c.desc||c.fornecedor||'Custo')}</div><div class="small muted">${fd(toN(c.data))} · <span class="mono">${esc(c.pacote)}</span> ${esc(p?p.cam:'pacote não encontrado')}${c.fornecedor?` · ${esc(c.fornecedor)}`:''}${c.doc?` · ${esc(c.doc)}`:''}${c.tipo?` · ${esc(c.tipo)}`:''}</div></div><div style="text-align:right"><b>${fR(c.valor)}</b>${S.readOnly?'':`<div><button class="btn" style="min-height:28px;padding:2px 10px;margin-top:4px" onclick="custoForm('${c._doc}')">Editar</button></div>`}</div></div>`; }).join('')
+    : '<div class="empty" style="padding:24px">Nenhum custo lançado ainda.<br><span class="small">Lance notas, medições e compras para comparar o gasto real com o orçado.</span></div>';
+  return `
+  <div class="toolbar"><div><div style="font-weight:700">${esc(S.orc.titulo)}</div><div class="small muted">${esc(S.orc.obra)} · ${esc(S.orc.bases)} · BDI ${S.orc.bdi}% · ${S.orc.itens.length} itens</div></div>
+    <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap">${S.readOnly?'':'<button class="btn dark" onclick="importForm()">⇪ Importar do Sienge</button><button class="btn" onclick="custoForm()">+ Lançar custo</button>'}</div></div>
+  <div class="ro-note" style="background:${F.snap?'var(--ok-soft)':'var(--warn-soft)'};color:${F.snap?'var(--ok)':'var(--warn)'};display:flex;gap:10px;align-items:center;flex-wrap:wrap">${F.snap?`Gasto real conforme Sienge até <b>${fd(toN(F.snap.data))}</b>: <b>${fR(F.snap.total)}</b> · ${Object.keys(F.snap.itens||{}).length} itens · ${esc(F.snap.arquivo||'')}`:'Nenhuma planilha do Sienge importada ainda. Use “Importar do Sienge” para trazer o gasto acumulado por item.'}${S.snaps.length?` <a href="javascript:void 0" onclick="snapsModal()" style="margin-left:auto">histórico de importações (${S.snaps.length})</a>`:''}</div>
+  <div class="grid kpis" style="margin-bottom:14px">
+    ${kpi('Orçamento total',fM(F.BAC),'valor de referência')}
+    ${kpi('Previsto até hoje',fM(F.VP),pctT(F.VP)+' do orçamento, pela linha de base')}
+    ${kpi('Executado (valor agregado)',fM(F.VA),pctT(F.VA)+' · avanço físico × orçado','var(--ok)')}
+    ${kpi('Custo real lançado',semCusto?'—':fM(F.CR),semCusto?'nenhum custo lançado':pctT(F.CR)+' do orçamento', semCusto?'':(F.CR>F.VA*1.05?'var(--bad)':''))}
+    ${kpi('Desvio de prazo (R$)',(dPrazo>=0?'+':'')+fM(dPrazo),'executado − previsto'+(F.IDP?` · IDP ${F.IDP.toFixed(2).replace('.',',')}`:''),dPrazo<0?'var(--bad)':'var(--ok)')}
+    ${kpi('Desvio de custo (R$)',semCusto?'—':(dCusto>=0?'+':'')+fM(dCusto),semCusto?'aguardando lançamentos':`executado − gasto · IDC ${F.IDC.toFixed(2).replace('.',',')}`,semCusto?'':(dCusto<0?'var(--bad)':'var(--ok)'))}
+    ${F.EAC?kpi('Custo final estimado',fM(F.EAC),'gasto até hoje + o que falta executar pelo orçado',F.EAC>F.BAC*1.001?'var(--bad)':'var(--ok)'):''}
+  </div>
+  <div class="card" style="margin-bottom:14px"><h3>Curva S – desembolso acumulado</h3>${chartS(F)}
+    <p class="hint" style="margin:8px 0 0">O previsto distribui o valor de cada item do orçamento pelos dias úteis dos serviços vinculados no cronograma. Despesas indiretas e taxa administrativa são distribuídas ao longo do prazo da obra.</p></div>
+  <div class="grid two" style="margin-bottom:14px">
+    <div class="card"><h3>Por pavimento</h3><div class="small muted" style="margin-bottom:6px">Barra = orçado · verde = executado · traço vermelho = custo real</div>${pavHtml}</div>
+    <div class="card"><h3 style="display:flex;justify-content:space-between">Últimos custos lançados <span class="muted">${S.custos.length} · ${fM(F.CR)}</span></h3><div style="max-height:420px;overflow:auto">${cList}</div></div>
+  </div>
+  <h3>Orçamento × realizado por etapa</h3>
+  <div class="tblwrap"><table><thead><tr><th>Etapa</th><th class="num">Orçado</th><th>% executado</th><th class="num">Previsto até hoje</th><th class="num">Executado (R$)</th><th class="num">Custo real</th><th class="num">Saldo a gastar</th></tr></thead>
+  <tbody>${grows}<tr style="background:var(--soft);font-weight:700"><td>TOTAL</td><td class="num">${fR(F.BAC)}</td><td>${pct(F.VA/F.BAC,1)}</td><td class="num">${fM(F.VP)}</td><td class="num">${fM(F.VA)}</td><td class="num">${F.CR?fM(F.CR):'—'}</td><td class="num">${fM(F.BAC-F.CR)}</td></tr></tbody></table></div>`;
+}
+
+function openPac(cod){
+  const F=S.fin||finCompute(); const p=F.pacs.find(x=>x.cod===cod); if(!p) return;
+  const itens=S.orc.itens.filter(i=>i.p===cod);
+  const cs=S.custos.filter(c=>c.pacote===cod);
+  const ed = !S.readOnly && S.canEdit!==false;
+  openModal(`<h2 style="font-size:17px"><span class="mono muted">${p.cod}</span> ${esc(p.cam)}</h2>
+   <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"><span class="pill p-gray">Orçado ${fR(p.v)}</span><span class="pill p-ok">Executado ${fM(p.ea)} (${pct(p.fis)})</span><span class="pill ${p.cr>p.ea*1.05&&p.cr?'p-bad':'p-info'}">Custo real ${p.cr?fM(p.cr):'—'}</span><span class="pill p-gray">Previsto até hoje ${fM(p.pv)}</span></div>
+   <h3>Itens do orçamento (${itens.length})</h3>
+   <div class="tblwrap" style="max-height:240px"><table><thead><tr><th>Item</th><th>Descrição</th><th>Un.</th><th class="num">Qtd.</th><th class="num">Unit.</th><th class="num">Total</th><th class="num">Gasto (Sienge)</th></tr></thead><tbody>
+   ${itens.map(i=>{ const g=F.snap&&F.snap.itens?F.snap.itens[i.cod]:null; return `<tr><td class="mono small">${i.cod}</td><td class="small" style="min-width:260px">${esc(i.d)}</td><td class="small">${esc(i.un)}</td><td class="num small">${i.q.toLocaleString('pt-BR')}</td><td class="num small">${fR(i.pu)}</td><td class="num small">${fR(i.v)}</td><td class="num small" style="${g>i.v*1.001?'color:var(--bad);font-weight:700':''}">${g!=null?fR(g):'—'}</td></tr>`; }).join('')}</tbody></table></div>
+   <h3 style="margin-top:16px">Vínculo com o cronograma</h3>
+   ${p.modo==='tempo'?'<p class="small" style="margin-top:0">Distribuído ao longo do prazo da obra (despesa indireta). O executado acompanha o avanço físico geral.</p>'
+     :`<div style="max-height:150px;overflow:auto;margin-bottom:6px">${p.parts.map(x=>`<div class="hol small" style="cursor:pointer" onclick="editTask(${x.r.id})"><span><span class="mono muted">${x.r.id}</span> ${esc(x.r.t.servico)} <span class="muted">· ${esc(x.r.t.grupo)} · ${fd(x.r.R,false)}–${fd(x.r.S,false)}</span></span><span>${fM(x.v)} · ${pct(x.r.O)}</span></div>`).join('')}</div>`}
+   ${ed?`<div class="form" style="margin-top:8px"><div class="f"><label>Distribuição</label><select class="inp" id="vModo"><option value="tarefas" ${p.modo==='tarefas'?'selected':''}>Pelos serviços do cronograma</option><option value="tempo" ${p.modo==='tempo'?'selected':''}>Ao longo do prazo da obra</option></select></div>
+      <div class="f"><label>IDs dos serviços vinculados</label><input class="inp" id="vIds" value="${p.modo==='tarefas'?p.parts.map(x=>x.r.id).join(', '):''}" placeholder="ex.: 20, 40, 88"></div></div><div class="err" id="vErr"></div>`:''}
+   <h3 style="margin-top:16px">Custos lançados (${cs.length})</h3>
+   ${cs.length?cs.map(c=>`<div class="hol small"><span>${fd(toN(c.data))} · ${esc(c.desc||c.fornecedor||'')}</span><b>${fR(c.valor)}</b></div>`).join(''):'<div class="small muted">Nenhum.</div>'}
+   <div class="actions">${ed&&S.vinc[cod]?`<button class="btn left" onclick="saveVinc('${cod}',true)">Voltar ao vínculo original</button>`:''}
+     ${S.readOnly?'':`<button class="btn" onclick="custoForm(null,'${cod}')">Lançar custo</button>`}
+     <button class="btn" onclick="closeModal()">Fechar</button>${ed?`<button class="btn pri" onclick="saveVinc('${cod}')">Salvar vínculo</button>`:''}</div>`, true);
+}
+async function saveVinc(cod, reset){
+  if(reset){ if(await guard(()=>db.doc('vinculos/'+cod.replace(/\./g,'_')).delete(), true)){ closeModal(); toast('Vínculo original restaurado.'); } return; }
+  const modo=$('#vModo').value; const ids=$('#vIds').value.split(/[,;\s]+/).filter(Boolean).map(Number);
+  if(modo==='tarefas'){ if(!ids.length) { $('#vErr').textContent='Informe ao menos um serviço.'; return; } const bad=ids.filter(i=>!S.ctx.byRes.has(i)); if(bad.length){ $('#vErr').textContent='Serviço não encontrado: '+bad.join(', '); return; } }
+  if(await guard(()=>db.doc('vinculos/'+cod.replace(/\./g,'_')).set({cod, modo, ids: modo==='tarefas'?ids:[]}), true)){ closeModal(); toast('Vínculo salvo.'); }
+}
+
+function custoForm(docId, pacPre){
+  const c = docId ? S.custos.find(x=>x._doc===docId) : null;
+  const pc = c ? c.pacote : (pacPre||'');
+  const pacBy=new Map(S.orc.pacotes.map(p=>[p.cod,p]));
+  const lbl = p => `${p.cod} · ${p.cam}`;
+  openModal(`<h2>${c?'Editar custo':'Lançar custo'}</h2>
+   <div class="form">
+    <div class="f"><label>Data</label><input type="date" class="inp" id="cDa" value="${esc(c?c.data:toS(hojeN()))}"></div>
+    <div class="f"><label>Valor (R$)</label><input class="inp" id="cVa" inputmode="decimal" placeholder="0,00" value="${c?String(c.valor).replace('.',','):''}"></div>
+    <div class="f full combo"><label>Item do orçamento</label><input class="inp" id="cPc" autocomplete="off" placeholder="Busque por etapa, pavimento ou código (ex.: 1.13.2)" value="${pc&&pacBy.get(pc)?esc(lbl(pacBy.get(pc))):''}"><input type="hidden" id="cPk" value="${esc(pc)}"><div class="combo-list" id="cList" hidden></div><div class="hint" id="cInfo"></div></div>
+    <div class="f full"><label>Descrição</label><input class="inp" id="cDe" value="${esc(c?c.desc||'':'')}" placeholder="ex.: Medição nº 3 – reboco 2º pav"></div>
+    <div class="f"><label>Fornecedor / empreiteiro</label><input class="inp" id="cFo" value="${esc(c?c.fornecedor||'':'')}"></div>
+    <div class="f"><label>Documento (NF, medição…)</label><input class="inp" id="cDo" value="${esc(c?c.doc||'':'')}"></div>
+    <div class="f"><label>Tipo</label><select class="inp" id="cTi">${['','Material','Mão de obra','Empreitada','Equipamento / locação','Indireto'].map(t=>`<option ${c&&c.tipo===t?'selected':''} value="${t}">${t||'—'}</option>`).join('')}</select></div>
+   </div><div class="err" id="cErr"></div>
+   <div class="actions">${c?`<button class="btn danger left" onclick="delCusto('${c._doc}')">Excluir</button>`:''}<button class="btn" onclick="closeModal()">Cancelar</button><button class="btn pri" onclick="saveCusto(${c?`'${c._doc}'`:'null'})">Salvar</button></div>`);
+  const inp=$('#cPc'), list=$('#cList'); let items=[], idx=0;
+  const info=()=>{ const p=pacBy.get($('#cPk').value); const F=S.fin; const x=F&&F.pacs.find(q=>q.cod===$('#cPk').value); $('#cInfo').innerHTML = p ? `Orçado ${fR(p.v)}${x?` · já lançado ${fR(x.cr)} · saldo ${fR(p.v-x.cr)}`:''}` : ''; };
+  const show=()=>{ const q=inp.value.trim().toLowerCase(); const terms=q.split(/\s+/).filter(Boolean);
+    items=S.orc.pacotes.filter(p=>{ const s=(p.cod+' '+p.cam+' '+(p.pav||'')).toLowerCase(); return terms.every(t=>s.includes(t)); }).slice(0,60); idx=0;
+    list.innerHTML=items.map((p,i)=>`<div data-i="${i}" class="${i?'':'on'}"><span class="mono muted">${p.cod}</span> ${esc(p.cam)} <span class="muted small">· ${fM(p.v)}</span></div>`).join('')||'<div class="muted">Nada encontrado</div>'; list.hidden=false; };
+  const pick=i=>{ const p=items[i]; if(!p) return; $('#cPk').value=p.cod; inp.value=lbl(p); list.hidden=true; info(); };
+  inp.addEventListener('focus',()=>{ inp.select(); show(); });
+  inp.addEventListener('input',()=>{ $('#cPk').value=''; show(); info(); });
+  inp.addEventListener('keydown',ev=>{ if(list.hidden) return; if(ev.key==='ArrowDown') idx=Math.min(items.length-1,idx+1); else if(ev.key==='ArrowUp') idx=Math.max(0,idx-1); else if(ev.key==='Enter'){ ev.preventDefault(); pick(idx); return; } else return; ev.preventDefault(); list.querySelectorAll('[data-i]').forEach(x=>x.classList.toggle('on',+x.dataset.i===idx)); });
+  list.addEventListener('mousedown',ev=>{ const x=ev.target.closest('[data-i]'); if(x){ ev.preventDefault(); pick(+x.dataset.i); } });
+  inp.addEventListener('blur',()=>setTimeout(()=>list.hidden=true,150));
+  info();
+}
+async function saveCusto(docId){
+  const data=$('#cDa').value, pac=$('#cPk').value;
+  const valor=parseFloat($('#cVa').value.replace(/\s|R\$/g,'').replace(/\.(?=\d{3}(\D|$))/g,'').replace(',','.'));
+  const err=m=>$('#cErr').textContent=m;
+  if(!data) return err('Informe a data.');
+  if(!pac || !S.orc.pacotes.some(p=>p.cod===pac)) return err('Escolha o item do orçamento na lista.');
+  if(!(valor>0)) return err('Informe um valor maior que zero.');
+  const old = docId ? S.custos.find(x=>x._doc===docId) : null;
+  const body={ data, pacote:pac, valor:Math.round(valor*100)/100, desc:$('#cDe').value.trim(), fornecedor:$('#cFo').value.trim(), doc:$('#cDo').value.trim(), tipo:$('#cTi').value,
+    autor: old?(old.autor||S.myId||null):(S.myId||null), criadoEm: old?(old.criadoEm||new Date().toISOString()):new Date().toISOString() };
+  const ref = docId ? db.doc('custos/'+docId) : db.collection('custos').doc();
+  if(await guard(()=>ref.set(body))){ closeModal(); toast('Custo lançado.'); }
+}
+function delCusto(docId){
+  openModal(`<h2>Excluir este custo?</h2><div class="actions"><button class="btn" onclick="custoForm('${docId}')">Voltar</button><button class="btn pri" style="background:var(--bad);border-color:var(--bad)" onclick="doDelCusto('${docId}')">Excluir</button></div>`);
+}
+async function doDelCusto(docId){ if(await guard(()=>db.doc('custos/'+docId).delete())){ closeModal(); toast('Custo excluído.'); } }
+
+
+// ================= Importação do realizado (Sienge) =================
+S.snaps=[];
+function snapCusto(sn){ // retorna Map pacote->valor e Map item->valor
+  const itemP=S._itemP||(S._itemP=new Map(S.orc.itens.map(i=>[i.cod,i.p])));
+  const pacSet=S._pacSet||(S._pacSet=new Set(S.orc.pacotes.map(p=>p.cod)));
+  const porP=new Map(); let tot=0;
+  for(const [k,v0] of Object.entries(sn.itens||{})){ const v=Number(v0)||0; const p=itemP.get(k)||(pacSet.has(k)?k:null); if(!p) continue; porP.set(p,(porP.get(p)||0)+v); tot+=v; }
+  return {porP,tot};
+}
+function ultimoSnap(t){ let s=null; for(const x of S.snaps){ const d=toN(x.data); if(d!=null&&d<=t&&(!s||d>=toN(s.data))) s=x; } return s; }
+let _xlsxP=null;
+function loadXLSX(){ if(window.XLSX) return Promise.resolve(); if(_xlsxP) return _xlsxP; _xlsxP=new Promise((ok,no)=>{ const sc=document.createElement('script'); sc.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'; sc.onload=ok; sc.onerror=()=>{_xlsxP=null;no();}; document.head.appendChild(sc); }); return _xlsxP; }
+function numBR(v){ if(typeof v==='number') return v; if(v==null) return NaN; let s=String(v).replace(/R\$|\s/g,''); if(!s) return NaN; if(s.includes(',')) s=s.replace(/\./g,'').replace(',','.'); const n=parseFloat(s); return n; }
+const IMP={};
+function importForm(){
+  if(!S.orc){ toast('Orçamento ainda carregando.'); return; }
+  openModal(`<h2>Importar realizado do Sienge</h2>
+   <p class="small" style="margin-top:0">Exporte do Sienge a planilha com <b>as mesmas linhas do orçamento</b> (coluna com o número do item, ex.: 1.13.2.4) e uma coluna com o <b>valor gasto acumulado até a data</b>. Arquivos .xlsx, .xls ou .csv.</p>
+   <div class="form">
+     <div class="f full"><label>Arquivo</label><input type="file" class="inp" id="iFile" accept=".xlsx,.xls,.csv"></div>
+     <div class="f"><label>Gasto acumulado até</label><input type="date" class="inp" id="iData" value="${toS(hojeN())}"></div>
+     <div class="f"><label>Aba</label><select class="inp" id="iAba" disabled><option>—</option></select></div>
+     <div class="f"><label>Coluna do item</label><select class="inp" id="iCod" disabled><option>—</option></select></div>
+     <div class="f"><label>Coluna do valor gasto</label><select class="inp" id="iVal" disabled><option>—</option></select></div>
+   </div>
+   <div id="iPrev" style="margin-top:12px"></div><div class="err" id="iErr"></div>
+   <div class="actions"><button class="btn" onclick="closeModal()">Cancelar</button><button class="btn pri" id="iSave" disabled onclick="saveImport()">Importar</button></div>`);
+  $('#iFile').onchange=async ev=>{
+    const f=ev.target.files[0]; if(!f) return; $('#iErr').textContent=''; $('#iPrev').innerHTML='<div class="muted small">Lendo arquivo…</div>';
+    try{ await loadXLSX(); }catch(e){ $('#iErr').textContent='Não foi possível carregar o leitor de planilhas. Verifique a conexão.'; return; }
+    try{ const buf=await f.arrayBuffer(); IMP.wb=XLSX.read(buf,{type:'array'}); IMP.nome=f.name; }catch(e){ $('#iErr').textContent='Não consegui ler esse arquivo.'; return; }
+    const aba=$('#iAba'); aba.innerHTML=IMP.wb.SheetNames.map(n=>`<option>${esc(n)}</option>`).join(''); aba.disabled=false;
+    aba.onchange=()=>prepSheet(aba.value); prepSheet(IMP.wb.SheetNames[0]);
+  };
+}
+function prepSheet(nome){
+  const rows=XLSX.utils.sheet_to_json(IMP.wb.Sheets[nome],{header:1,raw:true,defval:null});
+  IMP.rows=rows;
+  const codes=new Set(S.orc.itens.map(i=>i.cod).concat(S.orc.pacotes.map(p=>p.cod)));
+  const nc=Math.max(0,...rows.slice(0,800).map(r=>r.length));
+  const hits=[],nums=[];
+  for(let c=0;c<nc;c++){ let h=0,n=0,s=0; for(const r of rows){ const v=r[c]; if(v!=null&&codes.has(String(v).trim())) h++; const x=numBR(v); if(typeof v==='number'||(v!=null&&/^[\sR$\d.,-]+$/.test(String(v))&&!isNaN(x))){ n++; s+=isNaN(x)?0:x; } } hits.push(h); nums.push({n,s}); }
+  // cabeçalho: linha com mais textos antes dos dados
+  let hdr=null; for(let i=0;i<Math.min(40,rows.length);i++){ const r=rows[i]||[]; if(r.filter(v=>typeof v==='string'&&v.trim()).length>=3){ hdr=i; } if(r.some((v,c)=>v!=null&&codes.has(String(v).trim()))) break; }
+  const head=c=>{ const t=hdr!=null&&rows[hdr]&&rows[hdr][c]; return (t?String(t).trim():'')||('Coluna '+XLSX.utils.encode_col(c)); };
+  const cCod=hits.indexOf(Math.max(...hits));
+  const opts=[...Array(nc).keys()];
+  $('#iCod').innerHTML=opts.map(c=>`<option value="${c}" ${c===cCod?'selected':''}>${esc(head(c))}${hits[c]?` (${hits[c]} itens)`:''}</option>`).join(''); $('#iCod').disabled=false;
+  const numCols=opts.filter(c=>c!==cCod&&nums[c].n>=3);
+  const kw=/realiz|gast|apropr|execut|pago|custo|medid|acumul/i;
+  let cVal=numCols.filter(c=>kw.test(head(c))).pop(); if(cVal==null) cVal=numCols[numCols.length-1];
+  $('#iVal').innerHTML=numCols.map(c=>`<option value="${c}" ${c===cVal?'selected':''}>${esc(head(c))} · soma ${fM(nums[c].s)}</option>`).join('')||'<option value="">nenhuma coluna numérica</option>'; $('#iVal').disabled=false;
+  $('#iCod').onchange=$('#iVal').onchange=preview; IMP.hdr=hdr; IMP.head=head; preview();
+}
+function preview(){
+  const cc=+$('#iCod').value, cv=$('#iVal').value===''?null:+$('#iVal').value; const P=$('#iPrev');
+  if(cv==null){ P.innerHTML=''; $('#iSave').disabled=true; return; }
+  const leaf=new Map(S.orc.itens.map(i=>[i.cod,i])); const pac=new Map(S.orc.pacotes.map(p=>[p.cod,p]));
+  const itens={}; let tot=0, nIt=0; const fora=[]; const grupoLinhas=[];
+  for(const r of IMP.rows){ const k=r[cc]==null?'':String(r[cc]).trim(); const v=numBR(r[cv]); if(!k||isNaN(v)) continue;
+    if(leaf.has(k)){ itens[k]=(itens[k]||0)+v; tot+=v; nIt++; }
+    else if(/^\d+(\.\d+)*$/.test(k)) grupoLinhas.push([k,v]);
+    else if(v) fora.push([k,v]); }
+  // linhas de pacote só entram se nenhum item daquele pacote veio no arquivo
+  const pacComItem=new Set(Object.keys(itens).map(k=>leaf.get(k).p));
+  let usados=0; for(const [k,v] of grupoLinhas){ if(pac.has(k)&&!pacComItem.has(k)&&!Object.keys(itens).some(x=>x.startsWith(k+'.'))){ itens[k]=(itens[k]||0)+v; tot+=v; usados++; } }
+  const naoUsados=grupoLinhas.filter(([k])=>!(k in itens)&&!leaf.has(k)&&!pac.has(k)&&!S.orc.grupos.some(g=>g.cod===k)&&!/^\d+(\.\d+)?$/.test(k));
+  IMP.itens=itens; IMP.tot=tot;
+  const orcTot=S.orc.total;
+  P.innerHTML=`<div class="card" style="padding:12px 14px;background:var(--soft)">
+    <div style="display:flex;gap:14px;flex-wrap:wrap"><div><div class="small muted">Itens reconhecidos</div><b style="font-size:18px">${nIt}${usados?` + ${usados} pacotes`:''}</b> <span class="small muted">de ${S.orc.itens.length} · ${Object.values(itens).filter(v=>v).length} com gasto</span></div>
+    <div><div class="small muted">Total gasto no arquivo</div><b style="font-size:18px">${fR(tot)}</b> <span class="small muted">${pct(tot/orcTot,1)} do orçamento</span></div></div>
+    ${naoUsados.length?`<div class="small" style="margin-top:8px;color:var(--warn)">${naoUsados.length} linha(s) com número de item que não existe no orçamento foram ignoradas: ${naoUsados.slice(0,8).map(x=>esc(x[0])).join(', ')}${naoUsados.length>8?'…':''}</div>`:''}
+    ${nIt+usados===0?'<div class="err" style="margin-top:8px">Nenhuma linha bateu com os itens do orçamento. Confira a coluna do item.</div>':''}
+    <div class="small muted" style="margin-top:8px">Linhas de etapa/subtotal são ignoradas quando os itens dela já vieram no arquivo, para não somar em dobro.</div></div>`;
+  $('#iSave').disabled = (nIt+usados)===0;
+}
+async function saveImport(){
+  const data=$('#iData').value; if(!data){ $('#iErr').textContent='Informe a data.'; return; }
+  const ja=S.snaps.find(s=>s.data===data);
+  const body={ data, arquivo:IMP.nome||'', itens:IMP.itens, total:Math.round(IMP.tot*100)/100, autor:S.myId||null, criadoEm:new Date().toISOString() };
+  if(await guard(()=>db.doc('realizado/'+data).set(body))){ closeModal(); toast(ja?'Importação dessa data substituída.':'Realizado importado.'); }
+}
+function snapsModal(){
+  const l=[...S.snaps].sort((a,b)=>b.data.localeCompare(a.data));
+  openModal(`<h2>Importações do Sienge</h2>${l.length?l.map(s=>`<div class="hol"><span><b>${fd(toN(s.data))}</b> <span class="muted small">· ${esc(s.arquivo||'')} · ${Object.keys(s.itens||{}).length} itens</span></span><span><b>${fR(s.total)}</b> ${S.readOnly?'':`<button class="btn danger" style="min-height:28px;padding:2px 10px;margin-left:8px" onclick="delSnap('${s._doc}')">Excluir</button>`}</span></div>`).join(''):'<div class="muted">Nenhuma importação.</div>'}
+   <p class="hint">O app usa sempre a importação mais recente como gasto acumulado. Custos lançados à mão só somam se forem de data posterior à última importação.</p>
+   <div class="actions"><button class="btn" onclick="closeModal()">Fechar</button>${S.readOnly?'':'<button class="btn pri" onclick="importForm()">Nova importação</button>'}</div>`);
+}
+async function delSnap(id){ if(await guard(()=>db.doc('realizado/'+id).delete())){ toast('Importação excluída.'); snapsModal(); } }
+
+function goGrupo(g){ S.f.grupo=g; S.f.status=''; location.hash='#cronograma'; }
+function goStatus(s){ S.f.status=s; S.f.grupo=''; location.hash='#cronograma'; }
+
+function filtered(){
+  const q=S.f.q.trim().toLowerCase();
+  return S.ctx.rows.filter(r=>{
+    if(S.f.grupo && r.t.grupo!==S.f.grupo) return false;
+    if(S.f.status){ if(S.f.status==='Marco'){ if(!r.W.startsWith('Marco')) return false; } else if(S.f.status==='Atrasados'){ if(!/atrasado|com atraso/.test(r.W)) return false; } else if(r.W!==S.f.status) return false; }
+    if(q && !(String(r.id)===q || r.t.servico.toLowerCase().includes(q) || (r.t.equipe||'').toLowerCase().includes(q))) return false;
+    return true;
+  });
+}
+function vCrono(){
+  const rows=filtered();
+  const sts=['Concluído','Em andamento','Em andamento – atrasado','Não iniciado – atrasado','A iniciar','Marco','Atrasados'];
+  const tb = `<div class="toolbar">
+    <input class="inp" id="fq" placeholder="Buscar serviço, equipe ou ID" value="${esc(S.f.q)}" oninput="S.f.q=this.value;render()" style="flex:1;min-width:180px">
+    <select class="inp" onchange="S.f.grupo=this.value;render()"><option value="">Todos os pavimentos</option>${S.ctx.grupos.map(g=>`<option ${g===S.f.grupo?'selected':''}>${esc(g)}</option>`).join('')}</select>
+    <select class="inp" onchange="S.f.status=this.value;render()"><option value="">Todos os status</option>${sts.map(s=>`<option ${s===S.f.status?'selected':''}>${s}</option>`).join('')}</select>
+    <div class="seg"><button class="${S.f.modo==='lista'?'on':''}" onclick="S.f.modo='lista';render()">Lista</button><button class="${S.f.modo==='gantt'?'on':''}" onclick="S.f.modo='gantt';render()">Gantt</button></div>
+    ${S.readOnly?'':'<button class="btn pri" onclick="editTask(null)">+ Serviço</button>'}
+  </div><div class="small muted" style="margin:-4px 0 10px">${rows.length} de ${S.ctx.rows.length} serviços${S.f.grupo||S.f.status||S.f.q?` · <a href="javascript:void 0" onclick="S.f={...S.f,grupo:'',status:'',q:''};render()">limpar filtros</a>`:''}</div>`;
+  if(!rows.length) return tb+'<div class="card empty">Nenhum serviço com esses filtros.</div>';
+  if(S.f.modo==='gantt') return tb+gantt(rows);
+  let last=null;
+  const body = rows.map(r=>{
+    let sec='';
+    if(r.t.grupo!==last){ last=r.t.grupo; sec=`<tr><td colspan="10" style="background:#f6f3ec;font-weight:700;color:var(--brand)">${esc(last)}</td></tr>`; }
+    return sec+`<tr class="click" onclick="editTask(${r.id})">
+      <td class="mono">${r.id}</td>
+      <td class="svc">${esc(r.t.servico)}${r.check!=='OK'?` <span class="pill p-bad">${esc(r.check)}</span>`:''}<div class="small muted">${esc(r.t.equipe||'')}${(r.t.pred||[]).length?` · pred. ${r.t.pred.join(', ')}`:''}${r.t.lag?` · def. ${r.t.lag}`:''}</div></td>
+      <td class="num">${r.dur===0?'<span class="pill p-marco">marco</span>':r.dur}</td>
+      <td class="num">${fd(r.J)}</td><td class="num">${fd(r.K)}</td>
+      <td class="num muted">${fd(r.R)}</td><td class="num muted">${fd(r.S)}</td>
+      <td class="num" style="color:${r.V>0?'var(--bad)':r.V<0?'var(--ok)':'inherit'}">${r.V>0?'+':''}${r.V}</td>
+      <td style="min-width:90px"><div class="bar"><i style="width:${r.O*100}%;background:${r.O>=1?'var(--ok)':'var(--blue-bar)'}"></i></div><div class="small num" style="text-align:left">${pct(r.O)}</div></td>
+      <td>${statusPill(r.W)}</td></tr>`;
+  }).join('');
+  return tb+`<div class="tblwrap"><table><thead><tr><th>ID</th><th>Serviço</th><th class="num">Dur. (d.u.)</th><th class="num">Início</th><th class="num">Término</th><th class="num">Início base</th><th class="num">Término base</th><th class="num">Desvio</th><th>% concluído</th><th>Status</th></tr></thead><tbody>${body}</tbody></table></div>`;
+}
+const PX=5;
+function gantt(rows){
+  const h=hojeN();
+  let a=Math.min(...rows.map(r=>Math.min(r.J,r.R))), b=Math.max(...rows.map(r=>Math.max(r.K,r.S)));
+  a = a - ((new Date(a*86400000).getUTCDay()+6)%7); b=b+7;
+  const W=(b-a)*PX;
+  let wk=''; for(let d=a; d<b; d+=7){ wk+=`<div class="gwk" style="left:${(d-a)*PX}px"></div>`; }
+  let lab=''; for(let d=a; d<b; d+=14){ lab+=`<div class="gwkl" style="left:${(d-a)*PX}px">${fd(d,false)}</div>`; }
+  const tl = h>=a&&h<=b ? `<div class="today" style="left:${280+(h-a)*PX}px" title="Hoje"></div>` : '';
+  let last=null, out='';
+  for(const r of rows){
+    if(r.t.grupo!==last){ last=r.t.grupo; out+=`<div class="gsec"><div class="gname">${esc(last)}</div><div class="gtrack" style="width:${W}px">${wk}</div></div>`; }
+    const cls = r.O>=1?'done':r.V>0?'late':'';
+    const bars = r.dur===0 ? `<div class="gm" style="left:${(r.K-a)*PX+PX/2}px" title="${esc(r.t.servico)} · ${fd(r.K)}"></div>`
+      : `<div class="gb base" style="left:${(r.R-a)*PX}px;width:${Math.max(PX,(r.S-r.R+1)*PX)}px" title="Base: ${fd(r.R)} → ${fd(r.S)}"></div><div class="gb rep ${cls}" style="left:${(r.J-a)*PX}px;width:${Math.max(PX,(r.K-r.J+1)*PX)}px" title="Reprogramado: ${fd(r.J)} → ${fd(r.K)} · ${pct(r.O)}"></div>`;
+    out+=`<div class="grow" onclick="editTask(${r.id})" style="cursor:pointer"><div class="gname" title="${esc(r.t.servico)}"><span class="mono muted">${r.id}</span> ${esc(r.t.servico)}</div><div class="gtrack" style="width:${W}px">${wk}${bars}</div></div>`;
+  }
+  return `<div class="legend" style="margin-bottom:8px"><span><i style="background:var(--blue-bar)"></i>Reprogramado</span><span><i style="background:var(--bad)"></i>Reprogramado com atraso</span><span><i style="background:var(--ok)"></i>Concluído</span><span><i style="background:var(--gray-bar)"></i>Linha de base</span><span><i style="background:var(--accent);width:3px;height:12px"></i>Hoje</span></div>
+  <div class="gwrap" id="gwrap"><div class="gtbl" style="width:${W+280}px">${tl}<div class="ghead"><div class="gname">Serviço</div><div class="gtrack" style="width:${W}px;height:28px">${lab}</div></div>${out}</div></div>`;
+}
+function scrollGanttToday(){ const g=$('#gwrap'); const t=g&&g.querySelector('.today'); if(g&&t&&!g.dataset.s){ g.scrollLeft=Math.max(0,parseFloat(t.style.left)-400); g.dataset.s=1; } }
+
+// ---------- Diário
+function vDiario(){
+  const h=hojeN(); if(S.diaSel==null) S.diaSel=h;
+  const d=S.diaSel;
+  const ents = S.diario.filter(e=>toN(e.data)===d).sort((x,y)=>(x.criadoEm||'').localeCompare(y.criadoEm||''));
+  const pes = ents.reduce((s,e)=>s+(Number(e.pessoas)||0),0);
+  const prevHoje = S.ctx.rows.filter(r=>r.dur>0 && r.O<1 && d>=r.J && d<=r.K);
+  const list = ents.length ? ents.map(e=>{
+    const r=S.ctx.byRes.get(Number(e.id));
+    const prevD = r ? (d>=r.J&&d<=r.K) : false;
+    const nm = e.autor ? (S.names[e.autor]||'') : '';
+    return `<div class="entry">
+      <div><div class="t"><span class="mono muted">${esc(e.id)}</span> ${esc(r?r.t.servico:'ID não encontrado')}</div>
+      <div class="small muted">${esc(r?r.t.grupo:'')}${e.pessoas?` · ${e.pessoas} pessoa${e.pessoas>1?'s':''}`:''}${e.clima?` · ${esc(e.clima)}`:''}${nm?` · por ${esc(nm)}`:''}</div>
+      ${e.obs?`<div style="margin-top:4px">${esc(e.obs)}</div>`:''}
+      ${prevD?'':'<div style="margin-top:4px"><span class="pill p-warn">Fora do previsto nesse dia</span></div>'}</div>
+      <div style="text-align:right"><div style="font-weight:700;font-size:16px">+${pct(Number(e.pct)||0)}</div>${S.readOnly?'':`<button class="btn" style="min-height:30px;padding:4px 10px;margin-top:4px" onclick="editEntry('${e._doc}')">Editar</button>`}</div>
+    </div>`; }).join('') : '<div class="empty">Nenhum lançamento neste dia.</div>';
+  const prevList = prevHoje.length ? prevHoje.slice(0,40).map(r=>`<tr class="${S.readOnly?'':'click'}" ${S.readOnly?'':`onclick="newEntry(${r.id})"`}><td class="mono">${r.id}</td><td class="svc">${esc(r.t.servico)}<div class="small muted">${esc(r.t.grupo)} · ${esc(r.t.equipe||'')}</div></td><td class="num">${pct(r.O)}</td><td>${statusPill(r.W)}</td></tr>`).join('') : '<tr><td colspan="4" class="empty">Nenhum serviço programado para este dia.</td></tr>';
+  // recent days
+  const dias=[...new Set(S.diario.map(e=>toN(e.data)))].sort((a,b)=>b-a).slice(0,12);
+  return `
+  <div class="toolbar">
+    <button class="btn" onclick="S.diaSel-=1;render()">‹</button>
+    <input type="date" class="inp" value="${toS(d)}" onchange="S.diaSel=toN(this.value)??hojeN();render()">
+    <button class="btn" onclick="S.diaSel+=1;render()">›</button>
+    ${d!==h?'<button class="btn" onclick="S.diaSel=hojeN();render()">Hoje</button>':''}
+    <span class="muted">${fdw(d)}</span>
+    ${S.readOnly?'':'<button class="btn pri" style="margin-left:auto" onclick="newEntry()">+ Lançamento</button>'}
+  </div>
+  <div class="grid two">
+    <div class="card">
+      <h3>Lançamentos do dia (${ents.length}) · ${pes} pessoa${pes===1?'':'s'}</h3>
+      ${list}
+    </div>
+    <div class="grid" style="align-content:start">
+      <div class="card" style="padding:0;overflow:hidden">
+        <div style="padding:14px 16px 6px"><h3 style="margin:0">Programados para este dia (${prevHoje.length})</h3><div class="hint">${S.readOnly?'Segundo o cronograma reprogramado.':'Toque num serviço para lançar o avanço.'}</div></div>
+        <div style="max-height:420px;overflow:auto"><table><tbody>${prevList}</tbody></table></div>
+      </div>
+      ${dias.length?`<div class="card"><h3>Dias com lançamento</h3><div style="display:flex;flex-wrap:wrap;gap:6px">${dias.map(x=>`<button class="pill ${x===d?'p-info':'p-gray'}" style="border:0;cursor:pointer" onclick="S.diaSel=${x};render()">${fd(x)} · ${S.diario.filter(e=>toN(e.data)===x).length}</button>`).join('')}</div></div>`:''}
+    </div>
+  </div>`;
+}
+
+// ---------- Semana
+function vSemana(){
+  const h=hojeN(); if(S.semRef==null) S.semRef=h;
+  const W=semana(S.ctx, S.diario, S.semRef, h);
+  const c = s => W.lista.filter(x=>x.st===s).length;
+  const rows = W.lista.length ? W.lista.map(x=>`<tr class="click" onclick="editTask(${x.r.id})">
+    <td class="mono">${x.r.id}</td><td class="svc">${esc(x.r.t.servico)}<div class="small muted">${esc(x.r.t.grupo)} · ${esc(x.r.t.equipe||'')} · base ${fd(x.r.R,false)}–${fd(x.r.S,false)}</div></td>
+    <td class="num">${pct(x.G)}</td><td class="num"><b>${pct(x.H)}</b></td><td class="num" style="color:${x.desv<-0.005?'var(--bad)':'var(--ok)'}">${x.desv>0?'+':''}${pct(x.desv)}</td>
+    ${x.dd.map(d=>{ let k='',t=''; if(d.tem){ k=d.prev?'r':'x'; t=pct(d.real);} else if(d.prev){ k = d.d<=h ? 'm' : 'p'; t = d.d<=h?'—':'prev';} return `<td class="daycell">${k?`<span class="dc ${k}" title="${d.prev?'Previsto':'Não previsto'}${d.tem?' · realizado '+t:''}">${t}</span>`:''}</td>`; }).join('')}
+    <td class="num">${x.semAp?`<span class="pill p-bad">${x.semAp}</span>`:'0'}</td><td class="num">${x.fora?`<span class="pill p-warn">${x.fora}</span>`:'0'}</td><td>${statusPill(x.st)}</td></tr>`).join('')
+    : `<tr><td colspan="13" class="empty">Nenhum serviço previsto na linha de base para esta semana.</td></tr>`;
+  return `
+  <div class="toolbar weeknav">
+    <button class="btn" onclick="S.semRef-=7;render()">‹ Semana anterior</button>
+    <div style="font-weight:700">Semana ${W.semanaN} · ${fd(W.seg,false)} a ${fd(W.sex)}</div>
+    <button class="btn" onclick="S.semRef+=7;render()">Próxima ›</button>
+    ${(W.seg<=h&&h<=W.seg+6)?'':'<button class="btn" onclick="S.semRef=hojeN();render()">Esta semana</button>'}
+  </div>
+  <div class="grid kpis" style="margin-bottom:14px">
+    <div class="card kpi"><div class="l">Serviços previstos</div><div class="v">${W.lista.length}</div></div>
+    <div class="card kpi"><div class="l">Concluídos</div><div class="v" style="color:var(--ok)">${c('Concluído')}</div></div>
+    <div class="card kpi"><div class="l">Em dia</div><div class="v">${c('Em dia')}</div></div>
+    <div class="card kpi"><div class="l">Atrasados</div><div class="v" style="color:${c('Atrasado')?'var(--bad)':'inherit'}">${c('Atrasado')}</div></div>
+    <div class="card kpi"><div class="l">Lançamentos fora do previsto</div><div class="v">${W.foraTotal}</div></div>
+    <div class="card kpi"><div class="l">Pessoas apontadas</div><div class="v">${W.pessoas}</div><div class="s">soma da semana</div></div>
+  </div>
+  <div class="legend" style="margin-bottom:8px"><span><span class="dc r">%</span> previsto e realizado</span><span><span class="dc m">—</span> previsto sem lançamento</span><span><span class="dc x">%</span> realizado fora do previsto</span><span><span class="dc p">prev</span> previsto (ainda não chegou)</span></div>
+  <div class="tblwrap"><table><thead><tr><th>ID</th><th>Serviço</th><th class="num">% previsto até sexta</th><th class="num">% realizado</th><th class="num">Desvio</th>
+  ${W.dias.map(d=>`<th class="daycell">${DS[new Date(d*86400000).getUTCDay()]}<br><span class="small">${fd(d,false)}</span></th>`).join('')}
+  <th class="num">Dias sem lançamento</th><th class="num">Fora do previsto</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+// ---------- Ajustes
+function vAjustes(){
+  const c=S.cfg||{nome:'',inicio:'',feriados:[]};
+  const fer=[...(c.feriados||[])].sort((a,b)=>a.data.localeCompare(b.data));
+  const noEd = S.readOnly || S.canEdit===false; const dis = noEd?'disabled':'';
+  return `<div class="grid two">
+    <div class="card"><h3>Obra</h3>
+      <div class="form">
+        <div class="f full"><label>Nome da obra</label><input class="inp" id="cNome" value="${esc(c.nome||'')}" ${dis}></div>
+        <div class="f"><label>Data de início da obra</label><input type="date" class="inp" id="cIni" value="${esc(c.inicio||'')}" ${dis}></div>
+      </div>
+      ${noEd?'<p class="hint">Só quem é Editor da página pode alterar estes ajustes.</p>':'<div class="actions"><button class="btn pri" id="cSave">Salvar</button></div>'}
+      <p class="hint">Datas de início e término de cada serviço são recalculadas automaticamente a partir da data de início, das durações, dos vínculos e dos lançamentos do diário — igual à planilha.</p>
+    </div>
+    <div class="card"><h3>Feriados e dias parados (${fer.length})</h3>
+      <p class="hint" style="margin-top:0">Não contam como dia útil. Inclua feriados locais, recessos e dias de chuva.</p>
+      ${noEd?'':`<div class="toolbar"><input type="date" class="inp" id="hData"><input class="inp" id="hDesc" placeholder="Descrição" style="flex:1;min-width:120px"><button class="btn dark" id="hAdd">Adicionar</button></div>`}
+      <div style="max-height:380px;overflow:auto">${fer.map(f=>`<div class="hol"><div><span class="mono">${fdw(toN(f.data))}</span> <span class="muted">· ${esc(f.desc||'')}</span></div>${noEd?'':`<button class="btn danger" style="min-height:28px;padding:2px 10px" data-del="${esc(f.data)}">Remover</button>`}</div>`).join('')||'<div class="muted">Nenhum feriado cadastrado.</div>'}</div>
+    </div>
+  </div>`;
+}
+function bindAjustes(){
+  const save = $('#cSave'); if(save) save.onclick = async()=>{
+    const nome=$('#cNome').value.trim(), inicio=$('#cIni').value;
+    if(!inicio){ toast('Informe a data de início.'); return; }
+    const base = S.cfg ? {...S.cfg} : {feriados:[]};
+    if(await guard(()=>db.doc('config/obra').set({...base, nome, inicio, atualizadoEm:new Date().toISOString()}), true)) toast('Dados da obra salvos.');
+  };
+  const add=$('#hAdd'); if(add) add.onclick = async()=>{
+    const data=$('#hData').value, desc=$('#hDesc').value.trim();
+    if(!data){ toast('Escolha a data.'); return; }
+    const fer=[...((S.cfg&&S.cfg.feriados)||[])].filter(f=>f.data!==data); fer.push({data,desc});
+    if(await guard(()=>db.doc('config/obra').set({...(S.cfg||{}), feriados:fer, atualizadoEm:new Date().toISOString()}), true)) toast('Feriado adicionado.');
+  };
+  document.querySelectorAll('[data-del]').forEach(b=>b.onclick=async()=>{
+    const fer=(S.cfg.feriados||[]).filter(f=>f.data!==b.dataset.del);
+    await guard(()=>db.doc('config/obra').set({...S.cfg, feriados:fer, atualizadoEm:new Date().toISOString()}), true);
+  });
+}
+
+// ================= Modais =================
+function openModal(html,wide){ $('#modalRoot').innerHTML=`<div class="ov" onclick="if(event.target===this)closeModal()"><div class="modal" ${wide?'style="max-width:960px"':''}>${html}</div></div>`; }
+function closeModal(){ $('#modalRoot').innerHTML=''; }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+
+function editTask(id){
+  const r = id!=null ? S.ctx && S.ctx.byRes.get(Number(id)) : null;
+  const t = r ? r.t : null;
+  const grupos = S.ctx ? S.ctx.grupos : [];
+  const ro = S.readOnly ? 'disabled' : '';
+  const hist = t ? S.diario.filter(e=>Number(e.id)===r.id).sort((a,b)=>b.data.localeCompare(a.data)) : [];
+  openModal(`
+    <h2>${t?`<span class="mono muted">${t.id}</span> ${esc(t.servico)}`:'Novo serviço'}</h2>
+    ${r?`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">${statusPill(r.W)}<span class="pill p-gray">${fd(r.J)} → ${fd(r.K)}</span><span class="pill p-gray">${pct(r.O)} concluído</span>${r.V?`<span class="pill ${r.V>0?'p-bad':'p-ok'}">${r.V>0?'+':''}${r.V} d.u. vs base</span>`:''}${r.check!=='OK'?`<span class="pill p-bad">${esc(r.check)}</span>`:''}${S.fin&&S.fin.valT.get(r.id)?`<span class="pill p-info">Orçamento ${fM(S.fin.valT.get(r.id))}</span>`:''}</div>`:''}
+    <div class="form">
+      <div class="f full"><label>Serviço</label><input class="inp" id="tSv" value="${esc(t?t.servico:'')}" ${ro}></div>
+      <div class="f"><label>Pavimento / Grupo</label><input class="inp" id="tGr" list="grList" value="${esc(t?t.grupo:(S.f.grupo||''))}" ${ro}><datalist id="grList">${grupos.map(g=>`<option value="${esc(g)}">`).join('')}</datalist></div>
+      <div class="f"><label>Equipe / Responsável</label><input class="inp" id="tEq" value="${esc(t?t.equipe||'':'')}" ${ro}></div>
+      <div class="f"><label>Duração (dias úteis) · 0 = marco</label><input type="number" min="0" max="1000" class="inp" id="tDu" value="${t?t.dur:1}" ${ro}></div>
+      <div class="f"><label>Defasagem (dias úteis)</label><input type="number" min="-60" max="365" class="inp" id="tLg" value="${t?t.lag||0:0}" ${ro}></div>
+      <div class="f full"><label>Predecessoras (IDs separados por vírgula, até 4)</label><input class="inp" id="tPr" value="${esc(t?(t.pred||[]).join(', '):'')}" placeholder="ex.: 15, 16" ${ro}>
+        <div class="hint" id="tPrH">${t?(t.pred||[]).map(p=>{const x=S.ctx.byRes.get(Number(p));return x?`${p}: ${esc(x.t.servico)} (${esc(x.t.grupo)})`:`${p}: não encontrado`;}).join('<br>'):'O serviço começa no dia útil seguinte ao término da última predecessora.'}</div></div>
+      <div class="f"><label>Início – linha de base</label><input type="date" class="inp" id="tIb" value="${esc(t?t.ib||'':'')}" ${ro}></div>
+      <div class="f"><label>Término – linha de base</label><input type="date" class="inp" id="tTb" value="${esc(t?t.tb||'':'')}" ${ro}></div>
+      ${r&&!S.readOnly?`<div class="f full"><button class="btn" style="align-self:flex-start" onclick="$('#tIb').value='${toS(r.J)}';$('#tTb').value='${toS(r.K)}'">Usar datas reprogramadas como linha de base</button></div>`:''}
+      <div class="f full"><label>Observações</label><textarea class="inp" id="tOb" rows="2" ${ro}>${esc(t?t.obs||'':'')}</textarea></div>
+    </div>
+    <div class="err" id="tErr"></div>
+    ${hist.length?`<h3 style="margin-top:18px">Lançamentos no diário (${hist.length})</h3><div style="max-height:180px;overflow:auto">${hist.map(e=>`<div class="hol"><span><span class="mono">${fd(toN(e.data))}</span> <span class="muted">· ${e.pessoas||0} pess. ${e.obs?'· '+esc(e.obs):''}</span></span><b>+${pct(Number(e.pct)||0)}</b></div>`).join('')}</div>`:''}
+    <div class="actions">
+      ${t&&!S.readOnly?`<button class="btn danger left" onclick="delTask(${t.id})">Excluir</button>`:''}
+      ${t&&!S.readOnly&&r.dur>0&&r.O<1?`<button class="btn" onclick="closeModal();newEntry(${t.id})">Lançar avanço</button>`:''}
+      <button class="btn" onclick="closeModal()">${S.readOnly?'Fechar':'Cancelar'}</button>
+      ${S.readOnly?'':`<button class="btn pri" onclick="saveTask(${t?t.id:'null'})">Salvar</button>`}
+    </div>`);
+}
+async function saveTask(id){
+  const sv=$('#tSv').value.trim(), gr=$('#tGr').value.trim();
+  const dur=parseInt($('#tDu').value,10), lag=parseInt($('#tLg').value||'0',10);
+  const pred=$('#tPr').value.split(/[,;\s]+/).filter(Boolean).map(Number);
+  const err=m=>{ $('#tErr').textContent=m; };
+  if(!sv) return err('Informe o nome do serviço.');
+  if(!gr) return err('Informe o pavimento / grupo.');
+  if(!(dur>=0&&dur<=1000)) return err('Duração deve ser um número inteiro de 0 a 1000.');
+  if(isNaN(lag)||lag<-60||lag>365) return err('Defasagem deve ficar entre -60 e 365.');
+  if(pred.length>4) return err('No máximo 4 predecessoras.');
+  if(pred.some(p=>!Number.isInteger(p)||!S.ctx.byRes.has(p))) return err('Alguma predecessora não existe: '+pred.filter(p=>!S.ctx.byRes.has(p)).join(', '));
+  if(id!=null && pred.includes(id)) return err('Um serviço não pode ser predecessor dele mesmo.');
+  // ciclo
+  if(id!=null){ const seen=new Set(); const st=[...pred]; while(st.length){ const p=st.pop(); if(p===id) return err('Esses vínculos criam um ciclo.'); if(seen.has(p)) continue; seen.add(p); const x=S.ctx.byRes.get(p); if(x) st.push(...(x.t.pred||[]).map(Number)); } }
+  let doc, ordem, nid=id;
+  if(id!=null){ const t=S.ctx.byRes.get(id).t; doc=t._doc; ordem=t.ordem??t.id; }
+  else {
+    nid = Math.max(S.maxId||0,...S.tarefas.map(t=>Number(t.id)))+1;
+    const inG = S.ctx.rows.filter(r=>r.t.grupo===gr);
+    const allOrd = S.ctx.rows.map(r=>r.t.ordem??r.id);
+    if(inG.length){ const lastO = inG[inG.length-1].t.ordem??inG[inG.length-1].id; const nxt = allOrd.filter(o=>o>lastO).sort((a,b)=>a-b)[0]; ordem = nxt!=null ? (lastO+nxt)/2 : lastO+1; }
+    else ordem = Math.max(0,...allOrd)+1;
+    doc = 't'+String(nid).padStart(4,'0');
+  }
+  const data = { id:nid, ordem, grupo:gr, servico:sv, dur, pred, lag, equipe:$('#tEq').value.trim(), obs:$('#tOb').value.trim(), ib:$('#tIb').value||null, tb:$('#tTb').value||null };
+  if(await guard(()=>db.doc('tarefas/'+doc).set({...data, atualizadoEm:new Date().toISOString()}))){ closeModal(); toast(id!=null?'Serviço atualizado.':'Serviço '+nid+' criado.'); }
+}
+function delTask(id){
+  const t=S.ctx.byRes.get(id).t;
+  const deps=S.ctx.rows.filter(r=>(r.t.pred||[]).map(Number).includes(id));
+  openModal(`<h2>Excluir serviço ${id}?</h2><p>${esc(t.servico)} (${esc(t.grupo)})</p>
+    ${deps.length?`<p class="err">Atenção: ${deps.length} serviço(s) dependem dele: ${deps.map(d=>d.id).join(', ')}. Eles ficarão marcados com "ID inválido" até você corrigir.</p>`:''}
+    <div class="actions"><button class="btn" onclick="editTask(${id})">Voltar</button><button class="btn pri" style="background:var(--bad);border-color:var(--bad)" onclick="doDelTask(${id})">Excluir</button></div>`);
+}
+async function doDelTask(id){ const t=S.ctx.byRes.get(id).t; if(await guard(()=>db.doc('tarefas/'+t._doc).set({id:t.id, excluido:true, atualizadoEm:new Date().toISOString()}))){ closeModal(); toast('Serviço excluído.'); } }
+
+// ---- Lançamento no diário
+function taskLabel(r){ return `${r.id} · ${r.t.servico} · ${r.t.grupo}`; }
+function newEntry(id){ entryForm(null, id); }
+function editEntry(docId){ const e=S.diario.find(x=>x._doc===docId); if(e) entryForm(e); }
+function entryForm(e, presetId){
+  const d = e ? e.data : toS(S.diaSel ?? hojeN());
+  const sel = e ? Number(e.id) : (presetId ?? null);
+  const r = sel!=null ? S.ctx.byRes.get(sel) : null;
+  openModal(`<h2>${e?'Editar lançamento':'Novo lançamento'}</h2>
+    <div class="form">
+      <div class="f"><label>Data</label><input type="date" class="inp" id="eDa" value="${esc(d)}"></div>
+      <div class="f"><label>Nº de pessoas</label><input type="number" min="0" class="inp" id="ePe" value="${e&&e.pessoas!=null?e.pessoas:''}" placeholder="0"></div>
+      <div class="f full combo"><label>Serviço</label><input class="inp" id="eSv" autocomplete="off" placeholder="Busque por nome, pavimento ou ID" value="${r?esc(taskLabel(r)):''}"><input type="hidden" id="eId" value="${sel??''}"><div class="combo-list" id="eList" hidden></div>
+        <div class="hint" id="eInfo"></div></div>
+      <div class="f"><label>% avançado no dia</label><input type="number" min="0" max="100" step="1" class="inp" id="ePc" value="${e?Math.round((Number(e.pct)||0)*1000)/10:''}" placeholder="ex.: 20"></div>
+      <div class="f"><label>Clima</label><select class="inp" id="eCl">${['','Sol','Nublado','Chuva fraca','Chuva forte'].map(c=>`<option ${e&&e.clima===c?'selected':''} value="${c}">${c||'—'}</option>`).join('')}</select></div>
+      <div class="f full"><label>Observações / ocorrências</label><textarea class="inp" id="eOb" rows="3">${esc(e?e.obs||'':'')}</textarea></div>
+    </div>
+    <div class="err" id="eErr"></div>
+    <div class="actions">
+      ${e?`<button class="btn danger left" onclick="delEntry('${e._doc}')">Excluir</button>`:''}
+      <button class="btn" onclick="closeModal()">Cancelar</button>
+      <button class="btn pri" onclick="saveEntry(${e?`'${e._doc}'`:'null'})">Salvar</button>
+    </div>`);
+  bindCombo(e);
+  updEntryInfo(e);
+  if(!r) setTimeout(()=>$('#eSv').focus(),50);
+}
+function bindCombo(e){
+  const inp=$('#eSv'), list=$('#eList'); let idx=0, items=[];
+  const show=()=>{
+    const q=inp.value.trim().toLowerCase(); const h=toN($('#eDa').value)??hojeN();
+    let rs=S.ctx.rows.filter(r=>r.dur>0);
+    if(q){ const terms=q.split(/\s+/); rs=rs.filter(r=>{ const s=(r.id+' '+r.t.servico+' '+r.t.grupo+' '+(r.t.equipe||'')).toLowerCase(); return terms.every(t=>s.includes(t)); }); }
+    else rs=rs.filter(r=>r.O<1&&h>=r.J&&h<=r.K).concat(rs.filter(r=>r.O<1&&!(h>=r.J&&h<=r.K)));
+    items=rs.slice(0,60); idx=0;
+    list.innerHTML = items.map((r,i)=>`<div data-i="${i}" class="${i===0?'on':''}"><span class="mono muted">${r.id}</span> ${esc(r.t.servico)} <span class="muted small">· ${esc(r.t.grupo)} · ${pct(r.O)}</span></div>`).join('') || '<div class="muted">Nenhum serviço encontrado</div>';
+    list.hidden=false;
+  };
+  const pick=i=>{ const r=items[i]; if(!r) return; $('#eId').value=r.id; inp.value=taskLabel(r); list.hidden=true; updEntryInfo(e); $('#ePc').focus(); };
+  inp.addEventListener('focus',()=>{ inp.select(); show(); });
+  inp.addEventListener('input',()=>{ $('#eId').value=''; show(); updEntryInfo(e); });
+  inp.addEventListener('keydown',ev=>{ if(list.hidden) return; if(ev.key==='ArrowDown'){idx=Math.min(items.length-1,idx+1);} else if(ev.key==='ArrowUp'){idx=Math.max(0,idx-1);} else if(ev.key==='Enter'){ev.preventDefault();pick(idx);return;} else return; ev.preventDefault(); list.querySelectorAll('[data-i]').forEach(x=>x.classList.toggle('on',+x.dataset.i===idx)); });
+  list.addEventListener('mousedown',ev=>{ const x=ev.target.closest('[data-i]'); if(x){ ev.preventDefault(); pick(+x.dataset.i); } });
+  inp.addEventListener('blur',()=>setTimeout(()=>list.hidden=true,150));
+  $('#eDa').addEventListener('change',()=>updEntryInfo(e));
+}
+function updEntryInfo(e){
+  const id=Number($('#eId').value); const info=$('#eInfo'); if(!info) return;
+  const r=id?S.ctx.byRes.get(id):null; if(!r){ info.innerHTML=''; return; }
+  const d=toN($('#eDa').value);
+  const ja = S.diario.filter(x=>Number(x.id)===id && (!e || x._doc!==e._doc)).reduce((s,x)=>s+(Number(x.pct)||0),0);
+  const falta=Math.max(0,1-ja);
+  const prevD = d!=null && d>=r.J && d<=r.K;
+  info.innerHTML = `Já lançado: <b>${pct(Math.min(1,ja))}</b> · falta ${pct(falta)} · programado ${fd(r.J)} → ${fd(r.K)} ${prevD?'<span class="pill p-ok">previsto nesse dia</span>':'<span class="pill p-warn">fora do previsto nesse dia</span>'}
+    ${falta>0?` · <a href="javascript:void 0" onclick="$('#ePc').value='${Math.round(falta*1000)/10}'">concluir serviço (${pct(falta)})</a>`:''}`;
+}
+async function saveEntry(docId){
+  const data=$('#eDa').value, id=Number($('#eId').value), pc=parseFloat(String($('#ePc').value).replace(',','.'));
+  const pe=$('#ePe').value===''?null:parseInt($('#ePe').value,10);
+  const err=m=>{ $('#eErr').textContent=m; };
+  if(!data) return err('Informe a data.');
+  if(!id || !S.ctx.byRes.has(id)) return err('Escolha um serviço da lista.');
+  if(isNaN(pc)||pc<0||pc>100) return err('% do dia deve ficar entre 0 e 100.');
+  if(pe!=null && (isNaN(pe)||pe<0)) return err('Nº de pessoas inválido.');
+  const old = docId ? S.diario.find(x=>x._doc===docId) : null;
+  const body = { data, id, pessoas:pe, pct:Math.round(pc*10)/1000, clima:$('#eCl').value, obs:$('#eOb').value.trim(),
+    autor: old ? (old.autor||S.myId||null) : (S.myId||null), criadoEm: old ? (old.criadoEm||new Date().toISOString()) : new Date().toISOString() };
+  if(old && S.myId) body.editadoPor = S.myId;
+  const ref = docId ? db.doc('diario/'+docId) : db.collection('diario').doc();
+  body.atualizadoEm=new Date().toISOString();
+  if(await guard(()=>ref.set(body))){ closeModal(); S.diaSel=toN(data); toast('Lançamento salvo.'); render(); }
+}
+function delEntry(docId){
+  openModal(`<h2>Excluir lançamento?</h2><p class="muted">Isso remove o avanço lançado e recalcula o cronograma.</p><div class="actions"><button class="btn" onclick="editEntry('${docId}')">Voltar</button><button class="btn pri" style="background:var(--bad);border-color:var(--bad)" onclick="doDelEntry('${docId}')">Excluir</button></div>`);
+}
+async function doDelEntry(docId){ if(await guard(()=>db.doc('diario/'+docId).set({excluido:true, atualizadoEm:new Date().toISOString()}))){ closeModal(); toast('Lançamento excluído.'); } }
+
+// re-render at midnight-ish so "hoje" moves
+setInterval(()=>{ const h=hojeN(); if(S._h!==h){ S._h=h; schedule(); } }, 60000);
+S._h=hojeN();
+route();
+boot();
+</script>
+</body>
+</html>
