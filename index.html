@@ -33,6 +33,7 @@ nav::-webkit-scrollbar{display:none}
 nav a{color:#fff;opacity:.72;text-decoration:none;padding:9px 14px 11px;border-bottom:3px solid transparent;font-weight:500;white-space:nowrap}
 nav a.on{opacity:1;border-color:var(--accent)}
 main{max-width:1280px;margin:0 auto;padding:18px 16px 80px}
+@media(min-width:1600px){main,.hwrap{max-width:1760px}}
 h2{font-size:18px;margin:0 0 12px}
 h3{font-size:14px;margin:0 0 10px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:600}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px}
@@ -133,11 +134,12 @@ tr.click{cursor:pointer} tr.click:hover td{background:#faf7f1}
 
 /* prédio */
 .predio-wrap{display:grid;gap:16px;grid-template-columns:1fr}
-.topo{display:grid;gap:18px;grid-template-columns:1fr}
-@media(min-width:900px){.topo{grid-template-columns:1fr 1.3fr 1fr}.topo .tb+.tb{border-left:1px solid var(--line);padding-left:18px}}
-.topo .big{font-size:22px;font-weight:700;line-height:1.2}
+.topo{display:grid;gap:10px 18px;grid-template-columns:1fr;padding:10px 16px}
+@media(min-width:900px){.topo{grid-template-columns:auto 1.4fr auto;align-items:center}.topo .tb+.tb{border-left:1px solid var(--line);padding-left:18px}}
+.topo .big{font-size:19px;font-weight:700;line-height:1.15}
+.topo .cmp{gap:2px}.topo .cmp .row{grid-template-columns:70px 1fr 48px;font-size:12px}
 .fin-mini{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
-.fin-mini div{background:var(--soft);border-radius:8px;padding:7px 9px}
+.fin-mini div{background:var(--soft);border-radius:8px;padding:5px 9px}
 .fin-mini .l{font-size:11px;color:var(--muted)}
 .fin-mini .v{font-size:15px;font-weight:700}
 @media(min-width:1000px){.predio-wrap{grid-template-columns:minmax(0,1fr) 380px}}
@@ -146,9 +148,9 @@ tr.click{cursor:pointer} tr.click:hover td{background:#faf7f1}
 @media(max-width:640px){.bld-row{grid-template-columns:64px minmax(0,1fr) 62px;gap:6px}.bld-info .ph,.bld-info .pv{display:none}.colhdr{font-size:9px;gap:2px;padding:0 4px}.bld-lbl{font-size:11px!important}}
 .bld-lbl{font-size:12.5px;font-weight:600;display:flex;align-items:center;justify-content:flex-end;text-align:right;cursor:pointer;line-height:1.15}
 .bld-lbl:hover{color:var(--accent)}
-.facade{display:grid;grid-template-columns:repeat(var(--cols),1fr);gap:5px;padding:6px 8px;background:#d9d3c7;border-left:3px solid #b9b1a2;border-right:3px solid #b9b1a2}
+.facade{display:grid;grid-template-columns:repeat(var(--cols),1fr);gap:5px;padding:4px 8px;background:#d9d3c7;border-left:3px solid #b9b1a2;border-right:3px solid #b9b1a2}
 .floor-line{border-bottom:3px solid #b9b1a2}
-.win{position:relative;height:34px;border-radius:3px;background:#f3f0ea;border:1.5px solid #cfc8bb;overflow:hidden;cursor:pointer;transition:transform .12s}
+.win{position:relative;height:clamp(24px,calc((100vh - 500px) / 9),50px);border-radius:3px;background:#f3f0ea;border:1.5px solid #cfc8bb;overflow:hidden;cursor:pointer;transition:transform .12s}
 .win:hover{transform:scale(1.08);z-index:2;box-shadow:0 3px 10px rgba(0,0,0,.15)}
 .win i{position:absolute;left:0;right:0;bottom:0;background:var(--blue-bar)}
 .win.done{border-color:#2f8a57}.win.done i{background:var(--ok)}
@@ -158,12 +160,12 @@ tr.click{cursor:pointer} tr.click:hover td{background:#faf7f1}
 .win.wall:hover{transform:none;box-shadow:none}
 .win .act{position:absolute;top:3px;right:3px;width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 0 rgba(224,138,30,.7);animation:pulse 1.6s infinite}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(224,138,30,.6)}70%{box-shadow:0 0 0 7px rgba(224,138,30,0)}100%{box-shadow:0 0 0 0 rgba(224,138,30,0)}}
-.bld-info{display:flex;flex-direction:column;justify-content:center;font-size:12px;gap:3px;min-width:0}
-.bld-info .bar{height:6px}
+.bld-info{display:flex;flex-direction:column;justify-content:center;font-size:11.5px;gap:1px;min-width:0;line-height:1.25}
+.bld-info .bar{height:5px}
 .bld-info .ph{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:11.5px}
-.roof{height:30px;background:#8a5a44;clip-path:polygon(4% 100%,50% 0,96% 100%);margin:0 -4px}
+.roof{height:20px;background:#8a5a44;clip-path:polygon(4% 100%,50% 0,96% 100%);margin:0 -4px}
 .atico{display:grid;grid-template-columns:repeat(var(--cols),1fr)}
-.ground{height:14px;background:repeating-linear-gradient(135deg,#a3896b 0 6px,#8f7659 6px 12px);border-top:3px solid #6c5a45}
+.ground{height:10px;background:repeating-linear-gradient(135deg,#a3896b 0 6px,#8f7659 6px 12px);border-top:3px solid #6c5a45}
 .under .facade{background:#c8bfae}
 .colhdr{display:grid;grid-template-columns:repeat(var(--cols),1fr);gap:5px;padding:0 8px;font-size:10.5px;color:var(--muted);text-align:center;font-weight:600}
 .colhdr span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -175,6 +177,7 @@ tr.click{cursor:pointer} tr.click:hover td{background:#faf7f1}
 </style>
 <script>
 window.MIRROR=true;
+setTimeout(function(){ location.reload(); }, 15*60*1000); // TV: recarrega a cada 15 min
 (function(){
   var P=fetch('data.json?v='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();});
   P.then(function(D){ window.MIRROR_SYNC=D.atualizadoEmTexto||''; });
@@ -456,22 +459,17 @@ function vResumo(){
   <div class="grid" style="gap:14px">
     <div class="card topo">
       <div class="tb">
-        <div class="small muted">Situação da obra em ${fd(R.hoje)}</div>
-        <div class="big" style="color:${R.atraso>0?'var(--bad)':'var(--ok)'}">${esc(R.situacao)}</div>
-        <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><span class="pill ${sit}">${R.atraso>0?`${R.atrasoCorridos} dias corridos de atraso`:'Dentro do prazo'}</span></div>
-        <div class="small muted" style="margin-top:6px">Início ${fd(R.inicio)} · ${R.duracaoTotal} dias úteis · ${String(R.meses).replace('.',',')} meses</div>
+        <div class="small muted">Situação em ${fd(R.hoje)} · início ${fd(R.inicio)}</div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span class="big" style="color:${R.atraso>0?'var(--bad)':'var(--ok)'}">${esc(R.situacao)}</span><span class="pill ${sit}">${R.atraso>0?`${R.atrasoCorridos} dias corridos`:'no prazo'}</span></div>
       </div>
       <div class="tb">
-        <div class="small muted">Avanço físico · previsto × realizado</div>
-        <div style="display:flex;align-items:baseline;gap:10px;margin:2px 0 8px"><span class="big">${pct(R.real,1)}</span><span class="small muted">realizado de ${pct(R.prev,1)} previsto</span></div>
-        <div class="cmp">${compBar('Previsto',R.prev,'var(--gray-bar)')}${compBar('Realizado',R.real,'var(--blue-bar)')}</div>
-        <div class="small" style="margin-top:6px;color:${R.desvio<-0.0005?'var(--bad)':'var(--ok)'};font-weight:600">Desvio ${R.desvio>0?'+':''}${pct(R.desvio,1)}</div>
+        <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap"><span class="small muted">Avanço físico</span><span class="big" style="font-size:17px">${pct(R.real,1)}</span><span class="small muted">realizado de ${pct(R.prev,1)} previsto ·</span><span class="small" style="color:${R.desvio<-0.0005?'var(--bad)':'var(--ok)'};font-weight:700">desvio ${R.desvio>0?'+':''}${pct(R.desvio,1)}</span></div>
+        <div class="cmp" style="margin-top:3px">${compBar('Previsto',R.prev,'var(--gray-bar)')}${compBar('Realizado',R.real,'var(--blue-bar)')}</div>
       </div>
       <div class="tb">
-        <div class="small muted">Término previsto</div>
-        <div class="big" style="color:${R.atraso>0?'var(--bad)':'inherit'}">${fd(R.fimReprog)}</div>
-        <div class="small muted">reprogramado · ${R.restReprog} dias úteis restantes</div>
-        <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--line)"><span class="small muted">Linha de base:</span> <b>${fd(R.fimBase)}</b> <span class="small muted">· ${R.restBase} d.u.</span></div>
+        <div class="small muted">Término previsto (reprog.)</div>
+        <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap"><span class="big" style="color:${R.atraso>0?'var(--bad)':'inherit'}">${fd(R.fimReprog)}</span><span class="small muted">base ${fd(R.fimBase)}</span></div>
+        <div class="small muted">${R.restReprog} dias úteis restantes</div>
       </div>
     </div>
     ${vPredio()}
@@ -569,11 +567,11 @@ function vPredio(){
       <div style="max-height:360px;overflow:auto">${hoje.slice(0,30).map(r=>`<div class="today-item" onclick="editTask(${r.id})"><span class="tag">${esc((r.t.grupo||'').replace(' Pavimento','º pav').replace('ºº','º'))}</span><span>${esc(r.t.servico)}<br><span class="muted">${pct(r.O)} · ${r.W}</span></span></div>`).join('')||'<div class="muted small">Nada programado para hoje.</div>'}</div>
       ${S.readOnly?'':'<button class="btn pri" style="width:100%;margin-top:10px;justify-content:center" onclick="location.hash=\'#diario\'">Lançar no diário</button>'}
     </div>`;
-  const legend = `<div class="legend" style="margin:0 0 10px"><span><span class="w"></span>não iniciado</span><span><span class="w" style="background:linear-gradient(to top,var(--blue-bar) 50%,#f3f0ea 50%)"></span>em andamento (altura = % feito)</span><span><span class="w" style="background:var(--ok);border-color:#2f8a57"></span>concluído</span><span><span class="w" style="border:2px solid var(--bad)"></span>com atraso</span><span><span class="w" style="border-style:dashed;background:none"></span>sem serviço</span><span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-right:5px"></span>em execução</span></div>`;
+  const legend = `<div class="legend" style="margin:0 0 6px;font-size:11.5px;gap:10px"><span><span class="w"></span>não iniciado</span><span><span class="w" style="background:linear-gradient(to top,var(--blue-bar) 50%,#f3f0ea 50%)"></span>em andamento (altura = % feito)</span><span><span class="w" style="background:var(--ok);border-color:#2f8a57"></span>concluído</span><span><span class="w" style="border:2px solid var(--bad)"></span>com atraso</span><span><span class="w" style="border-style:dashed;background:none"></span>sem serviço</span><span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-right:5px"></span>em execução</span></div>`;
   return `<div class="predio-wrap">
-    <div class="card" style="padding:16px 12px">
+    <div class="card" style="padding:10px 12px">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 4px 4px"><h3 style="margin:0">O prédio hoje</h3>${window.MIRROR?'':`<div class="seg"><button class="${FM?'':'on'}" onclick="S.predioModo='fis';render()">Físico</button><button class="${FM?'on':''}" onclick="S.predioModo='fin';if(!S.orc)loadOrc();render()">Financeiro</button></div>`}</div>
-      <div class="small muted" style="margin:0 0 10px 4px">${FM?'Cada janela mostra o valor orçado da etapa no pavimento; o preenchimento é o quanto já foi executado. Borda vermelha: custo real acima do executado.':'Cada janela é uma etapa do pavimento. Toque para ver os serviços.'}</div>
+      <div class="small muted" style="margin:0 0 6px 4px">${FM?'Cada janela mostra o valor orçado da etapa no pavimento; o preenchimento é o quanto já foi executado. Borda vermelha: custo real acima do executado.':'Cada janela é uma etapa do pavimento. Toque para ver os serviços.'}</div>
       ${FM?'':legend}
       <div class="bld" style="--cols:${cols.length}">
         <div class="bld-row"><div></div><div class="colhdr">${cols.map(c=>`<span title="${c.n}">${c.a}</span>`).join('')}</div><div></div></div>
@@ -602,7 +600,7 @@ function finCard(){
       ${b('Executado',fM(F.VA),'var(--ok)',PCTM()?'':pct(F.VA/F.BAC,1)+' do total')}
       ${b('Custo real',sem?'—':fM(F.CR),sem?'':(F.CR>F.VA*1.05?'var(--bad)':''),sem?'sem lançamentos':(F.snap?'Sienge até '+fd(toN(F.snap.data),false):''))}
     </div>
-    ${chartS(F,{W:420,H:250,pl:62,fs:14,nx:5})}
+    ${chartS(F,{W:420,H:210,pl:62,fs:14,nx:5})}
   </div>`;
 }
 function openCell(key){
