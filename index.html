@@ -133,7 +133,14 @@ tr.click{cursor:pointer} tr.click:hover td{background:#faf7f1}
 
 /* prédio */
 .predio-wrap{display:grid;gap:16px;grid-template-columns:1fr}
-@media(min-width:1000px){.predio-wrap{grid-template-columns:minmax(0,1fr) 300px}}
+.topo{display:grid;gap:18px;grid-template-columns:1fr}
+@media(min-width:900px){.topo{grid-template-columns:1fr 1.3fr 1fr}.topo .tb+.tb{border-left:1px solid var(--line);padding-left:18px}}
+.topo .big{font-size:22px;font-weight:700;line-height:1.2}
+.fin-mini{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.fin-mini div{background:var(--soft);border-radius:8px;padding:7px 9px}
+.fin-mini .l{font-size:11px;color:var(--muted)}
+.fin-mini .v{font-size:15px;font-weight:700}
+@media(min-width:1000px){.predio-wrap{grid-template-columns:minmax(0,1fr) 380px}}
 .bld{--cols:9;position:relative;padding:0 4px}
 .bld-row{display:grid;grid-template-columns:96px minmax(0,1fr) 128px;align-items:stretch;gap:10px}
 @media(max-width:640px){.bld-row{grid-template-columns:64px minmax(0,1fr) 62px;gap:6px}.bld-info .ph,.bld-info .pv{display:none}.colhdr{font-size:9px;gap:2px;padding:0 4px}.bld-lbl{font-size:11px!important}}
@@ -447,24 +454,28 @@ function vResumo(){
     : '<tr><td colspan="8" class="empty">Nenhum serviço com término após a linha de base.</td></tr>';
   return `
   <div class="grid" style="gap:14px">
-    <div class="card banner">
-      <div><div class="small muted">Situação da obra em ${fd(R.hoje)}</div><div class="big">${esc(R.situacao)}</div></div>
-      <span class="pill ${sit}" style="font-size:13px">${R.atraso>0?`${R.atrasoCorridos} dias corridos de atraso`:'Dentro do prazo'}</span>
-      <div style="margin-left:auto" class="small muted">Início ${fd(R.inicio)} · ${R.duracaoTotal} dias úteis · ${String(R.meses).replace('.',',')} meses</div>
+    <div class="card topo">
+      <div class="tb">
+        <div class="small muted">Situação da obra em ${fd(R.hoje)}</div>
+        <div class="big" style="color:${R.atraso>0?'var(--bad)':'var(--ok)'}">${esc(R.situacao)}</div>
+        <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><span class="pill ${sit}">${R.atraso>0?`${R.atrasoCorridos} dias corridos de atraso`:'Dentro do prazo'}</span></div>
+        <div class="small muted" style="margin-top:6px">Início ${fd(R.inicio)} · ${R.duracaoTotal} dias úteis · ${String(R.meses).replace('.',',')} meses</div>
+      </div>
+      <div class="tb">
+        <div class="small muted">Avanço físico · previsto × realizado</div>
+        <div style="display:flex;align-items:baseline;gap:10px;margin:2px 0 8px"><span class="big">${pct(R.real,1)}</span><span class="small muted">realizado de ${pct(R.prev,1)} previsto</span></div>
+        <div class="cmp">${compBar('Previsto',R.prev,'var(--gray-bar)')}${compBar('Realizado',R.real,'var(--blue-bar)')}</div>
+        <div class="small" style="margin-top:6px;color:${R.desvio<-0.0005?'var(--bad)':'var(--ok)'};font-weight:600">Desvio ${R.desvio>0?'+':''}${pct(R.desvio,1)}</div>
+      </div>
+      <div class="tb">
+        <div class="small muted">Término previsto</div>
+        <div class="big" style="color:${R.atraso>0?'var(--bad)':'inherit'}">${fd(R.fimReprog)}</div>
+        <div class="small muted">reprogramado · ${R.restReprog} dias úteis restantes</div>
+        <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--line)"><span class="small muted">Linha de base:</span> <b>${fd(R.fimBase)}</b> <span class="small muted">· ${R.restBase} d.u.</span></div>
+      </div>
     </div>
     ${vPredio()}
-    <div class="grid kpis">
-      <div class="card kpi"><div class="l">Término – linha de base</div><div class="v">${fd(R.fimBase)}</div><div class="s">${R.restBase} dias úteis restantes</div></div>
-      <div class="card kpi"><div class="l">Término – reprogramado</div><div class="v" style="color:${R.atraso>0?'var(--bad)':'inherit'}">${fd(R.fimReprog)}</div><div class="s">${R.restReprog} dias úteis restantes</div></div>
-      <div class="card kpi"><div class="l">Atraso (dias úteis)</div><div class="v" style="color:${R.atraso>0?'var(--bad)':'var(--ok)'}">${R.atraso>0?'+':''}${R.atraso}</div><div class="s">${R.atrasoCorridos} dias corridos</div></div>
-      <div class="card kpi"><div class="l">Desvio de avanço</div><div class="v" style="color:${R.desvio<-0.0005?'var(--bad)':'var(--ok)'}">${R.desvio>0?'+':''}${pct(R.desvio,1)}</div><div class="s">realizado − previsto</div></div>
-    </div>
-    <div class="grid two">
-      <div class="card">
-        <h3>Avanço físico (ponderado pela duração)</h3>
-        <div class="cmp">${compBar('Previsto',R.prev,'var(--gray-bar)')}${compBar('Realizado',R.real,'var(--blue-bar)')}</div>
-        <p class="hint" style="margin:10px 0 0">Previsto pela linha de base na data de hoje. Realizado vem dos lançamentos do Diário de obra.</p>
-      </div>
+    <div class="grid">
       <div class="card">
         <h3>Serviços (${R.total})</h3>
         <div style="display:flex;flex-wrap:wrap;gap:8px">
@@ -573,7 +584,25 @@ function vPredio(){
       </div>
       ${facHtml}
     </div>
-    ${side}
+    <div class="grid" style="align-content:start;gap:14px">${finCard()}${side}</div>
+  </div>`;
+}
+
+function finCard(){
+  const head=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><h4 style="margin:0">Financeiro${PCTM()?' <span class="small muted">(% do orçamento)</span>':''}</h4>${S.orc?'<a class="small" href="#financeiro">ver tudo →</a>':''}</div>`;
+  if(S.orc===null){ loadOrc(); return `<div class="card side-card">${head}<div class="muted small">Carregando orçamento…</div></div>`; }
+  if(S.orc===false) return `<div class="card side-card">${head}<div class="muted small">Orçamento indisponível.</div></div>`;
+  const F=S.fin=finCompute(); if(!F) return '';
+  const sem=F.CR===0, dP=F.VA-F.VP;
+  const b=(l,v,c,sub)=>`<div><div class="l">${l}</div><div class="v" style="${c?'color:'+c:''}">${v}</div>${sub?`<div class="l">${sub}</div>`:''}</div>`;
+  return `<div class="card side-card">${head}
+    <div class="fin-mini">
+      ${PCTM()?b('Desvio de prazo',(dP>=0?'+':'')+fM(dP),dP<0?'var(--bad)':'var(--ok)','executado − previsto'):b('Orçamento',fM(F.BAC),'')}
+      ${b('Previsto até hoje',fM(F.VP),'',PCTM()?'':pct(F.VP/F.BAC,1)+' do total')}
+      ${b('Executado',fM(F.VA),'var(--ok)',PCTM()?'':pct(F.VA/F.BAC,1)+' do total')}
+      ${b('Custo real',sem?'—':fM(F.CR),sem?'':(F.CR>F.VA*1.05?'var(--bad)':''),sem?'sem lançamentos':(F.snap?'Sienge até '+fd(toN(F.snap.data),false):''))}
+    </div>
+    ${chartS(F,{W:420,H:250,pl:62,fs:14,nx:5})}
   </div>`;
 }
 function openCell(key){
@@ -676,19 +705,19 @@ function finCompute(){
 }
 
 // ---------- tela Financeiro
-function chartS(F){
-  const M=F.meses, W=820, H=300, pl=64, pr=14, pt=14, pb=34;
+function chartS(F,o){
+  o=o||{}; const M=F.meses, W=o.W||820, H=o.H||300, pl=o.pl||64, pr=14, pt=14, pb=34, FS=o.fs||11;
   const max = Math.max(F.BAC, M.rep[M.nM-1]||0, M.real[M.real.length-1]||0)*1.05 || 1;
   const x=i=>pl+(W-pl-pr)*(M.nM<=1?0:i/(M.nM-1)), y=v=>pt+(H-pt-pb)*(1-v/max);
   const path=(a,n)=>a.slice(0,n??a.length).map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+','+y(v).toFixed(1)).join('');
-  let g=''; for(let k=0;k<=5;k++){ const v=max/5*k; g+=`<line x1="${pl}" x2="${W-pr}" y1="${y(v)}" y2="${y(v)}" stroke="#ece8e0"/><text x="${pl-8}" y="${y(v)+4}" text-anchor="end" font-size="11" fill="#6b7177">${PCTM()?v.toFixed(0)+'%':(v/1e6).toFixed(0)+' mi'}</text>`; }
-  const step=Math.max(1,Math.ceil(M.nM/12)); let xl=''; for(let i=0;i<M.nM;i+=step) xl+=`<text x="${x(i)}" y="${H-12}" text-anchor="middle" font-size="11" fill="#6b7177">${mesLbl(M.m0+i)}</text>`;
+  let g=''; for(let k=0;k<=5;k++){ const v=max/5*k; g+=`<line x1="${pl}" x2="${W-pr}" y1="${y(v)}" y2="${y(v)}" stroke="#ece8e0"/><text x="${pl-8}" y="${y(v)+4}" text-anchor="end" font-size="${FS}" fill="#6b7177">${PCTM()?v.toFixed(0)+'%':(v/1e6).toFixed(0)+' mi'}</text>`; }
+  const step=Math.max(1,Math.ceil(M.nM/(o.nx||12))); let xl=''; for(let i=0;i<M.nM;i+=step) xl+=`<text x="${x(i)}" y="${H-12}" text-anchor="middle" font-size="${FS}" fill="#6b7177">${mesLbl(M.m0+i)}</text>`;
   const hx = M.mh>=0&&M.mh<M.nM ? x(M.mh) : null;
   const hasReal = F.CR>0;
   return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block" role="img" aria-label="Curva S do orçamento">
     ${g}${xl}
-    ${hx!=null?`<line x1="${hx}" x2="${hx}" y1="${pt}" y2="${H-pb}" stroke="#e08a1e" stroke-width="2" stroke-dasharray="4 3"/><text x="${hx+4}" y="${pt+10}" font-size="11" fill="#c77a0a" font-weight="600">hoje</text>`:''}
-    <line x1="${pl}" x2="${W-pr}" y1="${y(F.BAC)}" y2="${y(F.BAC)}" stroke="#1f3a4d" stroke-dasharray="2 4" opacity=".5"/><text x="${W-pr}" y="${y(F.BAC)-5}" text-anchor="end" font-size="11" fill="#1f3a4d">orçamento ${fM(F.BAC)}</text>
+    ${hx!=null?`<line x1="${hx}" x2="${hx}" y1="${pt}" y2="${H-pb}" stroke="#e08a1e" stroke-width="2" stroke-dasharray="4 3"/><text x="${hx+4}" y="${pt+10}" font-size="${FS}" fill="#c77a0a" font-weight="600">hoje</text>`:''}
+    <line x1="${pl}" x2="${W-pr}" y1="${y(F.BAC)}" y2="${y(F.BAC)}" stroke="#1f3a4d" stroke-dasharray="2 4" opacity=".5"/><text x="${W-pr}" y="${y(F.BAC)-5}" text-anchor="end" font-size="${FS}" fill="#1f3a4d">orçamento ${fM(F.BAC)}</text>
     <path d="${path(M.base)}" fill="none" stroke="#b5ad9f" stroke-width="2.5"/>
     <path d="${path(M.rep)}" fill="none" stroke="#2f6fa8" stroke-width="2.5" stroke-dasharray="6 4"/>
     <path d="${path(M.agr)}" fill="none" stroke="#2f8a57" stroke-width="3"/>
