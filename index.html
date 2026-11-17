@@ -179,7 +179,7 @@ window.MIRROR=true;
   window.claude={use:function(n){ return Promise.resolve(n==='db'?db:null); }};
 })();
 </script>
-<style>#nav a[data-v=financeiro],#nav a[data-v=ajustes]{display:none}</style>
+<style>#nav a[data-v=ajustes]{display:none}</style>
 </head>
 <body>
 <header>
@@ -374,10 +374,10 @@ async function boot(){
   const onErr = e => { clearTimeout(loadTimer); setLive('warn', e && e.code==='revoked' ? 'Acesso encerrado' : 'Conexão interrompida — recarregue a página'); };
   db.doc('config/obra').onSnapshot(s=>{ S.cfg = s.exists ? s.data() : null; if(!s.metadata.fromCache){S.loaded.cfg=true; done();} schedule(); }, onErr);
   db.collection('tarefas').onSnapshot(q=>{ const all=q.docs.map(d=>({...d.data(), _doc:d.id})); S.maxId=Math.max(0,...all.map(t=>Number(t.id)||0)); S.tarefas = all.filter(t=>!t.excluido); if(!q.metadata.fromCache){S.loaded.t=true; done();} schedule(); }, onErr);
-  db.collection('realizado').onSnapshot(q=>{ S.snaps=q.docs.map(d=>({...d.data(),_doc:d.id})); schedule(); }, onErr);
-  db.collection('custos').onSnapshot(q=>{ S.custos=q.docs.map(d=>({...d.data(),_doc:d.id})); schedule(); }, onErr);
-  db.collection('vinculos').onSnapshot(q=>{ const v={}; q.docs.forEach(d=>{ const x=d.data(); if(x&&x.cod) v[x.cod]=x; }); S.vinc=v; schedule(); }, onErr);
-  if(!window.MIRROR) loadOrc();
+  db.collection('realizado').onSnapshot(q=>{ S.snaps=q.docs.map(d=>({...d.data(),_doc:d.id})).filter(x=>!x.excluido&&x.data); schedule(); }, onErr);
+  db.collection('custos').onSnapshot(q=>{ S.custos=q.docs.map(d=>({...d.data(),_doc:d.id})).filter(x=>!x.excluido); schedule(); }, onErr);
+  db.collection('vinculos').onSnapshot(q=>{ const v={}; q.docs.forEach(d=>{ const x=d.data(); if(x&&x.cod&&!x.excluido) v[x.cod]=x; }); S.vinc=v; schedule(); }, onErr);
+  loadOrc();
   db.collection('diario').onSnapshot(q=>{ S.diario = q.docs.map(d=>({...d.data(), _doc:d.id})).filter(e=>!e.excluido); if(!q.metadata.fromCache){S.loaded.d=true; done();} loadNames(); schedule(); }, onErr);
 }
 function setLive(c,t){ $('#liveDot').className='dot '+c; $('#liveTxt').textContent=t; }
@@ -400,7 +400,7 @@ async function guard(fn, cfgOnly){
 }
 
 // ================= Roteamento =================
-function route(){ const h=(location.hash||'#resumo').slice(1); S.view=(window.MIRROR?['resumo','cronograma','diario','semana']:['resumo','cronograma','diario','semana','financeiro','ajustes']).includes(h)?h:'resumo';
+function route(){ const h=(location.hash||'#resumo').slice(1); S.view=(window.MIRROR?['resumo','cronograma','diario','semana','financeiro']:['resumo','cronograma','diario','semana','financeiro','ajustes']).includes(h)?h:'resumo';
   document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('on',a.dataset.v===S.view)); render(); window.scrollTo(0,0); }
 window.addEventListener('hashchange', route);
 
@@ -589,8 +589,10 @@ function openCell(key){
 // ================= Financeiro (orçamento x realizado) =================
 S.orc=null; S.custos=[]; S.vinc={}; S.finF={aberto:{}, q:'', mes:''}; S.fin=null;
 const BRL = new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'});
-const fR = v => BRL.format(v||0);
-function fM(v){ const a=Math.abs(v||0), s=v<0?'−':''; if(a>=1e6) return s+'R$ '+(a/1e6).toFixed(2).replace('.',',')+' mi'; if(a>=1e3) return s+'R$ '+Math.round(a/1e3).toLocaleString('pt-BR')+' mil'; return s+BRL.format(a); }
+const PCTM = () => !!window.MIRROR;
+const fPc = v => (v<0?'−':'')+Math.abs(v||0).toFixed(Math.abs(v||0)<1?2:1).replace('.',',')+'%';
+const fR = v => PCTM()? fPc(v) : BRL.format(v||0);
+function fM(v){ if(PCTM()) return fPc(v); const a=Math.abs(v||0), s=v<0?'−':''; if(a>=1e6) return s+'R$ '+(a/1e6).toFixed(2).replace('.',',')+' mi'; if(a>=1e3) return s+'R$ '+Math.round(a/1e3).toLocaleString('pt-BR')+' mil'; return s+BRL.format(a); }
 const MESES=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
 function mesIdx(n){ const d=new Date(n*86400000); return d.getUTCFullYear()*12+d.getUTCMonth(); }
 function mesLbl(i){ return MESES[i%12]+'/'+String(Math.floor(i/12)).slice(2); }
@@ -679,7 +681,7 @@ function chartS(F){
   const max = Math.max(F.BAC, M.rep[M.nM-1]||0, M.real[M.real.length-1]||0)*1.05 || 1;
   const x=i=>pl+(W-pl-pr)*(M.nM<=1?0:i/(M.nM-1)), y=v=>pt+(H-pt-pb)*(1-v/max);
   const path=(a,n)=>a.slice(0,n??a.length).map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+','+y(v).toFixed(1)).join('');
-  let g=''; for(let k=0;k<=5;k++){ const v=max/5*k; g+=`<line x1="${pl}" x2="${W-pr}" y1="${y(v)}" y2="${y(v)}" stroke="#ece8e0"/><text x="${pl-8}" y="${y(v)+4}" text-anchor="end" font-size="11" fill="#6b7177">${(v/1e6).toFixed(0)} mi</text>`; }
+  let g=''; for(let k=0;k<=5;k++){ const v=max/5*k; g+=`<line x1="${pl}" x2="${W-pr}" y1="${y(v)}" y2="${y(v)}" stroke="#ece8e0"/><text x="${pl-8}" y="${y(v)+4}" text-anchor="end" font-size="11" fill="#6b7177">${PCTM()?v.toFixed(0)+'%':(v/1e6).toFixed(0)+' mi'}</text>`; }
   const step=Math.max(1,Math.ceil(M.nM/12)); let xl=''; for(let i=0;i<M.nM;i+=step) xl+=`<text x="${x(i)}" y="${H-12}" text-anchor="middle" font-size="11" fill="#6b7177">${mesLbl(M.m0+i)}</text>`;
   const hx = M.mh>=0&&M.mh<M.nM ? x(M.mh) : null;
   const hasReal = F.CR>0;
@@ -724,15 +726,15 @@ function vFin(){
     <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap">${S.readOnly?'':'<button class="btn dark" onclick="importForm()">⇪ Importar do Sienge</button><button class="btn" onclick="custoForm()">+ Lançar custo</button>'}</div></div>
   <div class="ro-note" style="background:${F.snap?'var(--ok-soft)':'var(--warn-soft)'};color:${F.snap?'var(--ok)':'var(--warn)'};display:flex;gap:10px;align-items:center;flex-wrap:wrap">${F.snap?`Gasto real conforme Sienge até <b>${fd(toN(F.snap.data))}</b>: <b>${fR(F.snap.total)}</b> · ${Object.keys(F.snap.itens||{}).length} itens · ${esc(F.snap.arquivo||'')}`:'Nenhuma planilha do Sienge importada ainda. Use “Importar do Sienge” para trazer o gasto acumulado por item.'}${S.snaps.length?` <a href="javascript:void 0" onclick="snapsModal()" style="margin-left:auto">histórico de importações (${S.snaps.length})</a>`:''}</div>
   <div class="grid kpis" style="margin-bottom:14px">
-    ${kpi('Orçamento total',fM(F.BAC),'valor de referência')}
+    ${PCTM()?'':kpi('Orçamento total',fM(F.BAC),'valor de referência')}
     ${kpi('Previsto até hoje',fM(F.VP),pctT(F.VP)+' do orçamento, pela linha de base')}
     ${kpi('Executado (valor agregado)',fM(F.VA),pctT(F.VA)+' · avanço físico × orçado','var(--ok)')}
     ${kpi('Custo real lançado',semCusto?'—':fM(F.CR),semCusto?'nenhum custo lançado':pctT(F.CR)+' do orçamento', semCusto?'':(F.CR>F.VA*1.05?'var(--bad)':''))}
-    ${kpi('Desvio de prazo (R$)',(dPrazo>=0?'+':'')+fM(dPrazo),'executado − previsto'+(F.IDP?` · IDP ${F.IDP.toFixed(2).replace('.',',')}`:''),dPrazo<0?'var(--bad)':'var(--ok)')}
-    ${kpi('Desvio de custo (R$)',semCusto?'—':(dCusto>=0?'+':'')+fM(dCusto),semCusto?'aguardando lançamentos':`executado − gasto · IDC ${F.IDC.toFixed(2).replace('.',',')}`,semCusto?'':(dCusto<0?'var(--bad)':'var(--ok)'))}
+    ${kpi('Desvio de prazo '+(PCTM()?'':' (R$)'),(dPrazo>=0?'+':'')+fM(dPrazo),'executado − previsto'+(F.IDP?` · IDP ${F.IDP.toFixed(2).replace('.',',')}`:''),dPrazo<0?'var(--bad)':'var(--ok)')}
+    ${kpi('Desvio de custo '+(PCTM()?'':' (R$)'),semCusto?'—':(dCusto>=0?'+':'')+fM(dCusto),semCusto?'aguardando lançamentos':`executado − gasto · IDC ${F.IDC.toFixed(2).replace('.',',')}`,semCusto?'':(dCusto<0?'var(--bad)':'var(--ok)'))}
     ${F.EAC?kpi('Custo final estimado',fM(F.EAC),'gasto até hoje + o que falta executar pelo orçado',F.EAC>F.BAC*1.001?'var(--bad)':'var(--ok)'):''}
   </div>
-  <div class="card" style="margin-bottom:14px"><h3>Curva S – desembolso acumulado</h3>${chartS(F)}
+  <div class="card" style="margin-bottom:14px"><h3>Curva S – desembolso acumulado${PCTM()?' (% do orçamento)':''}</h3>${chartS(F)}
     <p class="hint" style="margin:8px 0 0">O previsto distribui o valor de cada item do orçamento pelos dias úteis dos serviços vinculados no cronograma. Despesas indiretas e taxa administrativa são distribuídas ao longo do prazo da obra.</p></div>
   <div class="grid two" style="margin-bottom:14px">
     <div class="card"><h3>Por pavimento</h3><div class="small muted" style="margin-bottom:6px">Barra = orçado · verde = executado · traço vermelho = custo real</div>${pavHtml}</div>
@@ -751,8 +753,8 @@ function openPac(cod){
   openModal(`<h2 style="font-size:17px"><span class="mono muted">${p.cod}</span> ${esc(p.cam)}</h2>
    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"><span class="pill p-gray">Orçado ${fR(p.v)}</span><span class="pill p-ok">Executado ${fM(p.ea)} (${pct(p.fis)})</span><span class="pill ${p.cr>p.ea*1.05&&p.cr?'p-bad':'p-info'}">Custo real ${p.cr?fM(p.cr):'—'}</span><span class="pill p-gray">Previsto até hoje ${fM(p.pv)}</span></div>
    <h3>Itens do orçamento (${itens.length})</h3>
-   <div class="tblwrap" style="max-height:240px"><table><thead><tr><th>Item</th><th>Descrição</th><th>Un.</th><th class="num">Qtd.</th><th class="num">Unit.</th><th class="num">Total</th><th class="num">Gasto (Sienge)</th></tr></thead><tbody>
-   ${itens.map(i=>{ const g=F.snap&&F.snap.itens?F.snap.itens[i.cod]:null; return `<tr><td class="mono small">${i.cod}</td><td class="small" style="min-width:260px">${esc(i.d)}</td><td class="small">${esc(i.un)}</td><td class="num small">${i.q.toLocaleString('pt-BR')}</td><td class="num small">${fR(i.pu)}</td><td class="num small">${fR(i.v)}</td><td class="num small" style="${g>i.v*1.001?'color:var(--bad);font-weight:700':''}">${g!=null?fR(g):'—'}</td></tr>`; }).join('')}</tbody></table></div>
+   <div class="tblwrap" style="max-height:240px"><table><thead><tr><th>Item</th><th>Descrição</th><th>Un.</th>${PCTM()?'':'<th class="num">Qtd.</th><th class="num">Unit.</th>'}<th class="num">Total</th><th class="num">Gasto (Sienge)</th></tr></thead><tbody>
+   ${itens.map(i=>{ const g=F.snap&&F.snap.itens?F.snap.itens[i.cod]:null; return `<tr><td class="mono small">${i.cod}</td><td class="small" style="min-width:260px">${esc(i.d)}</td><td class="small">${esc(i.un)}</td>${PCTM()?'':`<td class="num small">${i.q.toLocaleString('pt-BR')}</td><td class="num small">${fR(i.pu)}</td>`}<td class="num small">${fR(i.v)}</td><td class="num small" style="${g>i.v*1.001?'color:var(--bad);font-weight:700':''}">${g!=null?fR(g):'—'}</td></tr>`; }).join('')}</tbody></table></div>
    <h3 style="margin-top:16px">Vínculo com o cronograma</h3>
    ${p.modo==='tempo'?'<p class="small" style="margin-top:0">Distribuído ao longo do prazo da obra (despesa indireta). O executado acompanha o avanço físico geral.</p>'
      :`<div style="max-height:150px;overflow:auto;margin-bottom:6px">${p.parts.map(x=>`<div class="hol small" style="cursor:pointer" onclick="editTask(${x.r.id})"><span><span class="mono muted">${x.r.id}</span> ${esc(x.r.t.servico)} <span class="muted">· ${esc(x.r.t.grupo)} · ${fd(x.r.R,false)}–${fd(x.r.S,false)}</span></span><span>${fM(x.v)} · ${pct(x.r.O)}</span></div>`).join('')}</div>`}
@@ -765,10 +767,10 @@ function openPac(cod){
      <button class="btn" onclick="closeModal()">Fechar</button>${ed?`<button class="btn pri" onclick="saveVinc('${cod}')">Salvar vínculo</button>`:''}</div>`, true);
 }
 async function saveVinc(cod, reset){
-  if(reset){ if(await guard(()=>db.doc('vinculos/'+cod.replace(/\./g,'_')).delete(), true)){ closeModal(); toast('Vínculo original restaurado.'); } return; }
+  if(reset){ if(await guard(()=>db.doc('vinculos/'+cod.replace(/\./g,'_')).set({cod, excluido:true, atualizadoEm:new Date().toISOString()}), true)){ closeModal(); toast('Vínculo original restaurado.'); } return; }
   const modo=$('#vModo').value; const ids=$('#vIds').value.split(/[,;\s]+/).filter(Boolean).map(Number);
   if(modo==='tarefas'){ if(!ids.length) { $('#vErr').textContent='Informe ao menos um serviço.'; return; } const bad=ids.filter(i=>!S.ctx.byRes.has(i)); if(bad.length){ $('#vErr').textContent='Serviço não encontrado: '+bad.join(', '); return; } }
-  if(await guard(()=>db.doc('vinculos/'+cod.replace(/\./g,'_')).set({cod, modo, ids: modo==='tarefas'?ids:[]}), true)){ closeModal(); toast('Vínculo salvo.'); }
+  if(await guard(()=>db.doc('vinculos/'+cod.replace(/\./g,'_')).set({cod, modo, ids: modo==='tarefas'?ids:[], atualizadoEm:new Date().toISOString()}), true)){ closeModal(); toast('Vínculo salvo.'); }
 }
 
 function custoForm(docId, pacPre){
@@ -808,7 +810,7 @@ async function saveCusto(docId){
   if(!pac || !S.orc.pacotes.some(p=>p.cod===pac)) return err('Escolha o item do orçamento na lista.');
   if(!(valor>0)) return err('Informe um valor maior que zero.');
   const old = docId ? S.custos.find(x=>x._doc===docId) : null;
-  const body={ data, pacote:pac, valor:Math.round(valor*100)/100, desc:$('#cDe').value.trim(), fornecedor:$('#cFo').value.trim(), doc:$('#cDo').value.trim(), tipo:$('#cTi').value,
+  const body={ atualizadoEm:new Date().toISOString(), data, pacote:pac, valor:Math.round(valor*100)/100, desc:$('#cDe').value.trim(), fornecedor:$('#cFo').value.trim(), doc:$('#cDo').value.trim(), tipo:$('#cTi').value,
     autor: old?(old.autor||S.myId||null):(S.myId||null), criadoEm: old?(old.criadoEm||new Date().toISOString()):new Date().toISOString() };
   const ref = docId ? db.doc('custos/'+docId) : db.collection('custos').doc();
   if(await guard(()=>ref.set(body))){ closeModal(); toast('Custo lançado.'); }
@@ -816,7 +818,7 @@ async function saveCusto(docId){
 function delCusto(docId){
   openModal(`<h2>Excluir este custo?</h2><div class="actions"><button class="btn" onclick="custoForm('${docId}')">Voltar</button><button class="btn pri" style="background:var(--bad);border-color:var(--bad)" onclick="doDelCusto('${docId}')">Excluir</button></div>`);
 }
-async function doDelCusto(docId){ if(await guard(()=>db.doc('custos/'+docId).delete())){ closeModal(); toast('Custo excluído.'); } }
+async function doDelCusto(docId){ if(await guard(()=>db.doc('custos/'+docId).set({excluido:true, atualizadoEm:new Date().toISOString()}))){ closeModal(); toast('Custo excluído.'); } }
 
 
 // ================= Importação do realizado (Sienge) =================
@@ -899,7 +901,7 @@ function preview(){
 async function saveImport(){
   const data=$('#iData').value; if(!data){ $('#iErr').textContent='Informe a data.'; return; }
   const ja=S.snaps.find(s=>s.data===data);
-  const body={ data, arquivo:IMP.nome||'', itens:IMP.itens, total:Math.round(IMP.tot*100)/100, autor:S.myId||null, criadoEm:new Date().toISOString() };
+  const body={ atualizadoEm:new Date().toISOString(), data, arquivo:IMP.nome||'', itens:IMP.itens, total:Math.round(IMP.tot*100)/100, autor:S.myId||null, criadoEm:new Date().toISOString() };
   if(await guard(()=>db.doc('realizado/'+data).set(body))){ closeModal(); toast(ja?'Importação dessa data substituída.':'Realizado importado.'); }
 }
 function snapsModal(){
@@ -908,7 +910,7 @@ function snapsModal(){
    <p class="hint">O app usa sempre a importação mais recente como gasto acumulado. Custos lançados à mão só somam se forem de data posterior à última importação.</p>
    <div class="actions"><button class="btn" onclick="closeModal()">Fechar</button>${S.readOnly?'':'<button class="btn pri" onclick="importForm()">Nova importação</button>'}</div>`);
 }
-async function delSnap(id){ if(await guard(()=>db.doc('realizado/'+id).delete())){ toast('Importação excluída.'); snapsModal(); } }
+async function delSnap(id){ if(await guard(()=>db.doc('realizado/'+id).set({excluido:true, atualizadoEm:new Date().toISOString()}))){ toast('Importação excluída.'); snapsModal(); } }
 
 function goGrupo(g){ S.f.grupo=g; S.f.status=''; location.hash='#cronograma'; }
 function goStatus(s){ S.f.status=s; S.f.grupo=''; location.hash='#cronograma'; }
